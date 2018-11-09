@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using reactDemo.Core.Services.Mongo;
 
 namespace reactDemo
 {
@@ -27,6 +27,8 @@ namespace reactDemo
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddSingleton<IDBInitializer>(new DBInitializer());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
