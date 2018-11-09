@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using reactDemo.Core.Repositories;
 using reactDemo.Core.Services.Mongo;
 
 namespace reactDemo
@@ -29,6 +30,7 @@ namespace reactDemo
             });
 
             services.AddSingleton<IDBInitializer>(new DBInitializer());
+            services.AddSingleton<IUserRepository, UserRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
