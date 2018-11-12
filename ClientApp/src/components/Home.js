@@ -1,10 +1,12 @@
 ﻿import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 import { login } from '../actions';
 
 const classes = theme => ({
@@ -29,8 +31,24 @@ const classes = theme => ({
     input: {
         display: 'none',
     },
+    demo: {
+        height: 240,
+    },
+    paper: {
+        padding: theme.spacing.unit * 2,
+        height: '100%',
+        color: theme.palette.text.secondary,
+    },
+    control: {
+        padding: theme.spacing.unit * 2,
+    },
+    root: {
+        ...theme.mixins.gutters(),
+        paddingTop: theme.spacing.unit * 2,
+        paddingBottom: theme.spacing.unit * 2,
+        flexGrow: 1
+    },
 });
-
 
 
 class Home extends Component {
@@ -66,30 +84,40 @@ class Home extends Component {
         const { name, password } = this.state;
 
         if (!logged) {
-            return (<div>
-                <TextField
-                    id="name"
-                    label="Name"
-                    className={classes.textField}
-                    value={name}
-                    name="name"
-                    margin="normal"
-                    onChange={this.handleChange}
-                />
-                <TextField
-                    id="password"
-                    label="Password"
-                    className={classes.textField}
-                    value={password}
-                    margin="normal"
-                    type="password"
-                    name="password"
-                    onChange={this.handleChange}
-                />
-                <Button variant="contained" className={classes.button} onClick={this.handleLogin}>
-                    Login
+            return (
+                <Grid
+                    container
+                    direction="column"
+                    justify="flex-start"
+                    alignItems="center">
+                    <Paper className={classes.root} elevation={1}>
+                        <Typography variant="h5" component="h3">
+                            Welcome. Please Login
+                    </Typography>
+                    </Paper>
+                    <TextField
+                        id="name"
+                        label="Name"
+                        className={classes.textField}
+                        value={name}
+                        name="name"
+                        margin="normal"
+                        onChange={this.handleChange}
+                    />
+                    <TextField
+                        id="password"
+                        label="Password"
+                        className={classes.textField}
+                        value={password}
+                        margin="normal"
+                        type="password"
+                        name="password"
+                        onChange={this.handleChange}
+                    />
+                    <Button variant="contained" className={classes.button} onClick={this.handleLogin}>
+                        Login
                 </Button>
-            </div>);
+                </Grid>);
         }
         else {
             return (
