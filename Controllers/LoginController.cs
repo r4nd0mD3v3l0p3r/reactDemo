@@ -23,7 +23,7 @@ namespace reactDemo.Controllers
             var dbUser = userRepository.GetUser(user.Name, user.Password);
 
             if (dbUser == null)
-                return NotFound();
+                return StatusCode(401);
 
             return Ok();
         }

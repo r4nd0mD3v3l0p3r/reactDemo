@@ -23,7 +23,8 @@ function login(
     state = {
         isFetching: false,
         didInvalidate: false,
-        logged: false
+        logged: false,
+        invalidCredentials: false
     },
     action
 ) {
@@ -32,18 +33,21 @@ function login(
             return Object.assign({}, state, {
                 isFetching: false,
                 didInvalidate: true,
-                logged: true
+                logged: true,
+                invalidCredentials: false
             });
         case LOGIN_REQUEST:
             return Object.assign({}, state, {
                 isFetching: false,
-                didInvalidate: false
+                didInvalidate: false,
+                invalidCredentials: false
             });
         case LOGIN_KO:
             return Object.assign({}, state, {
                 isFetching: false,
                 didInvalidate: false,
-                logged: false
+                logged: false,
+                invalidCredentials: true
             });
         default:
             return state;

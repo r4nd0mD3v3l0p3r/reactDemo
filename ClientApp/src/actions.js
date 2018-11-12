@@ -39,7 +39,7 @@ export function login(data) {
                 }
             })
             .catch(function (error) {
-                console.log(error);
+                dispatch(loginKo());
             });
     };
 }

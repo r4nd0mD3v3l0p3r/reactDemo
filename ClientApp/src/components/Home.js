@@ -5,7 +5,6 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { login } from '../actions';
 
@@ -47,7 +46,7 @@ const classes = theme => ({
         paddingTop: theme.spacing.unit * 2,
         paddingBottom: theme.spacing.unit * 2,
         flexGrow: 1
-    },
+    }
 });
 
 
@@ -80,7 +79,7 @@ class Home extends Component {
     }
 
     render() {
-        const { logged, isFetching } = this.props;
+        const { logged, isFetching, invalidCredentials } = this.props;
         const { name, password } = this.state;
 
         if (!logged) {
@@ -89,12 +88,14 @@ class Home extends Component {
                     container
                     direction="column"
                     justify="flex-start"
-                    alignItems="center">
-                    <Paper className={classes.root} elevation={1}>
-                        <Typography variant="h5" component="h3">
+                    alignItems="center"
+                >
+                    <Grid>
+                        <Typography component="h3" variant="h3">
                             Welcome. Please Login
-                    </Typography>
-                    </Paper>
+                        </Typography>
+
+                    </Grid>
                     <TextField
                         id="name"
                         label="Name"
@@ -114,9 +115,12 @@ class Home extends Component {
                         name="password"
                         onChange={this.handleChange}
                     />
+                    {invalidCredentials && <span component="h5" variant="h5" color="red">
+                        Invalid Credentials
+                    </span>}
                     <Button variant="contained" className={classes.button} onClick={this.handleLogin}>
                         Login
-                </Button>
+                    </Button>
                 </Grid>);
         }
         else {
@@ -135,13 +139,14 @@ Home.propTypes = {
 
 function mapStateToProps(state) {
     const { store } = state;
-    const { isFetching, logged } = store.login || {
+    const { isFetching, logged, invalidCredentials } = store.login || {
         isFetching: false,
-        logged: false
+        logged: false,
+        invalidCredentials: false
     };
 
     return {
-        logged, isFetching
+        logged, isFetching, invalidCredentials
     };
 }
 
