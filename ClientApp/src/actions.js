@@ -2,6 +2,7 @@
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_OK = 'LOGIN_OK';
 export const LOGIN_KO = 'LOGIN_KO';
+export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
 
 export function loginRequest(data) {
     return {
@@ -19,6 +20,12 @@ export function loginOk() {
 export function loginKo() {
     return {
         type: LOGIN_KO
+    };
+}
+
+export function logoutRequest() {
+    return {
+        type: LOGOUT_REQUEST
     };
 }
 

@@ -2,7 +2,8 @@
 import {
     LOGIN_REQUEST,
     LOGIN_OK,
-    LOGIN_KO
+    LOGIN_KO,
+    LOGOUT_REQUEST
 } from './actions';
 
 
@@ -11,6 +12,7 @@ function store(state = {}, action) {
         case LOGIN_REQUEST:
         case LOGIN_OK:
         case LOGIN_KO:
+        case LOGOUT_REQUEST:
             return Object.assign({}, state, {
                 'login': login(state, action)
             });
@@ -48,6 +50,13 @@ function login(
                 didInvalidate: false,
                 logged: false,
                 invalidCredentials: true
+            });
+        case LOGOUT_REQUEST:
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false,
+                logged: false,
+                invalidCredentials: false
             });
         default:
             return state;

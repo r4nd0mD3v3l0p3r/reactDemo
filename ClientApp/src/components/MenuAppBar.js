@@ -20,6 +20,7 @@ import MailIcon from "@material-ui/icons/Mail";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
+import { logoutRequest } from '../actions';
 
 const drawerWidth = 240;
 
@@ -81,9 +82,24 @@ const styles = theme => ({
 });
 
 class MenuAppBar extends React.Component {
-    state = {
-        open: false
-    };
+
+    constructor(props) {
+        super(props);
+
+        this.state =
+            {
+                open: false
+            };
+
+        this.handleLogout = this.handleLogout.bind(this);
+
+    }
+
+    handleLogout() {
+        const { dispatch } = this.props;
+
+        dispatch(logoutRequest());
+    }
 
     handleDrawerOpen = () => {
         this.setState({ open: true });
@@ -98,15 +114,15 @@ class MenuAppBar extends React.Component {
         let button;
         if (logged) {
             button = (
-                <Link to="/login">
-                    <Button color="inherit">Logout</Button>
-                </Link>
+                <Button color="inherit" onClick={this.handleLogout}>Logout</Button>
             );
         } else {
             button = (
-                <Link to="/login">
-                    <Button color="inherit">Login</Button>
-                </Link>
+
+                <Button color="inherit">Login
+                    <Link to="/login">
+                    </Link>
+                </Button>
             );
         }
         const { open } = this.state;
