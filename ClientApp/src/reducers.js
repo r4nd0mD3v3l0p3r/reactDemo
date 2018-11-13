@@ -12,7 +12,7 @@ function store(state = {}, action) {
         case LOGIN_OK:
         case LOGIN_KO:
             return Object.assign({}, state, {
-                ['login']: login(state['login'], action)
+                'login': login(state, action)
             });
         default:
             return state;
