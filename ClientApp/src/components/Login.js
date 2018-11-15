@@ -58,25 +58,17 @@ const classes = theme => ({
 
 class Login extends Component {
 
-    constructor(props) {
-        super(props);
+    state =
+        {
+            name: '',
+            password: ''
+        };
 
-        this.state =
-            {
-                name: '',
-                password: ''
-            };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleLogin = this.handleLogin.bind(this);
-
-    }
-
-    handleChange(event) {
+    handleChange = (event) => {
         this.setState({ [event.target.name]: event.target.value });
     }
 
-    handleLogin() {
+    handleLogin = () => {
         const { name, password } = this.state;
         const { dispatch } = this.props;
 

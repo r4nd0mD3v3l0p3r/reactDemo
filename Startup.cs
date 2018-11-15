@@ -30,7 +30,7 @@ namespace reactDemo
             });
 
             services.AddSingleton<IDBInitializer>(new DBInitializer());
-            services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddSingleton<IUsersRepository, UserRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

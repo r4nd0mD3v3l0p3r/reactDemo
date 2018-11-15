@@ -36,7 +36,14 @@ namespace reactDemo.Core.Services.Mongo
         {
             var users = new List<User>
             {
-                new User{ Name = "admin", Password = "admin" }
+                new User{ Name = "admin", Password = "admin" },
+                new User{ Name = "Edgar Allan Poe", Password = "Edgar" },
+                new User{ Name = "Stephen King", Password = "Stephen" },
+                new User{ Name = "Howard P. Lovecraft", Password = "Howard" },
+                new User{ Name = "Fox Mulder", Password = "Fox" },
+                new User{ Name = "Dana Scully", Password = "Dana" },
+                new User{ Name = "Samuel Winchester", Password = "Samuel" },
+                new User{ Name = "Dean Winchester", Password = "Dean" },
             };
 
             GetDatabase().GetCollection<User>(UsersCollection).InsertMany(users);

@@ -81,21 +81,13 @@ const styles = theme => ({
     }
 });
 
+
+
 class MenuAppBar extends React.Component {
 
-    constructor(props) {
-        super(props);
+    state = {open: false};
 
-        this.state =
-            {
-                open: false
-            };
-
-        this.handleLogout = this.handleLogout.bind(this);
-
-    }
-
-    handleLogout() {
+    handleLogout = () => {
         const { dispatch } = this.props;
 
         dispatch(logoutRequest());
@@ -118,11 +110,7 @@ class MenuAppBar extends React.Component {
             );
         } else {
             button = (
-
-                <Button color="inherit">Login
-                    <Link to="/login">
-                    </Link>
-                </Button>
+                <Button color="inherit" component={Link} to="/login">Login</Button>
             );
         }
         const { open } = this.state;

@@ -9,18 +9,61 @@ using System.Threading.Tasks;
 
 namespace reactDemo.Core.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : IUsersRepository
     {
-        readonly IDBInitializer _dBInitializer;
+        readonly IDBInitializer dbInitializer;
 
         public UserRepository(IDBInitializer dBInitializer)
         {
-            _dBInitializer = dBInitializer;
+            dbInitializer = dBInitializer;
         }
 
-        public User GetUser(string name, string password)
+        public async Task<User> GetUserAsync(string name, string password)
         {
-            return _dBInitializer.GetDatabase().GetCollection<User>(DBInitializer.UsersCollection).AsQueryable().Where(x => x.Password == password && x.Name == name).FirstOrDefault();
+            return (await GetCollection().FindAsync(x => x.Name == name && x.Password == password)).FirstOrDefault();
         }
+
+        public async Task<UserResult> AddUserAsync(string name, string password)
+        {
+            var userAlreadyExists = (await GetCollection().FindAsync(x => x.Name == name)).Any();
+
+            if (userAlreadyExists)
+            {
+                return UserResult.UserAlreadyExists;
+            }
+
+            await GetCollection().InsertOneAsync(new User { Name = name, Password = password });
+
+            return UserResult.Ok;
+        }
+
+        public async Task DeleteUserAsync(string name)
+        {
+            await GetCollection().DeleteOneAsync(x => x.Name == name);
+        }
+
+        public IEnumerable<User> GetAllUsers()
+        {
+            return GetCollection().AsQueryable();
+        }
+
+        public async Task<bool> ChangeUserPasswordAsync(string name, string password)
+        {
+            var result = await GetCollection().UpdateOneAsync(x => x.Name == name, Builders<User>.Update.Set(x => x.Password, password));
+
+            return result.IsAcknowledged && result.MatchedCount > 0;
+        }
+
+        IMongoCollection<User> GetCollection()
+        {
+            return dbInitializer.GetDatabase().GetCollection<User>(DBInitializer.UsersCollection);
+        }
+
+    }
+
+    public enum UserResult
+    {
+        Ok,
+        UserAlreadyExists
     }
 }
