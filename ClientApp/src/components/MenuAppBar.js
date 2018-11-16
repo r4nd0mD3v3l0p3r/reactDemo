@@ -16,7 +16,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import GroupIcon from "@material-ui/icons/Group";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -153,25 +153,12 @@ class MenuAppBar extends React.Component {
                     </div>
                     <Divider />
                     <List>
-                        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-                            <ListItem button key={text}>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        ))}
-                    </List>
-                    <Divider />
-                    <List>
-                        {["All mail", "Trash", "Spam"].map((text, index) => (
-                            <ListItem button key={text}>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        ))}
+                        <ListItem button key="Users Page" component={Link} to="/users">
+                            <ListItemIcon>
+                                <GroupIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Users Page" />
+                        </ListItem>
                     </List>
                 </Drawer>
                 <main
