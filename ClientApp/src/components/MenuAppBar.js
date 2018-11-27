@@ -85,7 +85,7 @@ const styles = theme => ({
 
 class MenuAppBar extends React.Component {
 
-    state = {open: false};
+    state = { open: false };
 
     handleLogout = () => {
         const { dispatch } = this.props;
@@ -125,14 +125,14 @@ class MenuAppBar extends React.Component {
                     })}
                 >
                     <Toolbar disableGutters={!open}>
-                        <IconButton
+                        {logged && <IconButton
                             color="inherit"
                             aria-label="Open drawer"
                             onClick={this.handleDrawerOpen}
                             className={classNames(classes.menuButton, open && classes.hide)}
                         >
                             <MenuIcon />
-                        </IconButton>
+                        </IconButton>}
                         <Typography variant="h6" color="inherit" noWrap style={{ flex: 1 }} />
                         {button}
                     </Toolbar>

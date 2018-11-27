@@ -19,7 +19,7 @@ namespace reactDemo.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetUsers() => Ok(userRepository.GetAllUsers().Select(x => new UserModel { Name = x.Name, Password = x.Password }));
+        public IActionResult GetUsers() => base.Ok(AllUsers());
 
         [HttpPost]
         public async Task<IActionResult> AddUserAsync([FromBody] UserModel user)
@@ -27,11 +27,11 @@ namespace reactDemo.Controllers
             switch (await userRepository.AddUserAsync(user.Name, user.Password))
             {
                 case UserResult.Ok:
-                    return Ok();
+                    return Ok(AllUsers());
                 case UserResult.UserAlreadyExists:
                     return StatusCode(400, "A user with the same name already exists.");
                 default:
-                    return StatusCode(400);
+                    return StatusCode(400, "An error occurred. Try again later.");
             }
         }
 
@@ -50,6 +50,11 @@ namespace reactDemo.Controllers
                 return Ok();
 
             return StatusCode(500);
+        }
+
+        IEnumerable<UserModel> AllUsers()
+        {
+            return userRepository.GetAllUsers().Select(x => new UserModel { Name = x.Name, Password = x.Password });
         }
     }
 }

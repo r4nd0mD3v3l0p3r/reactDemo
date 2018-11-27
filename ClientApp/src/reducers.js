@@ -4,7 +4,10 @@ import {
     LOGIN_OK,
     LOGIN_KO,
     LOGOUT_REQUEST,
-    USERS_LIST_RECEIVED
+    USERS_LIST_RECEIVED,
+    ADD_USERS_REQUEST,
+    ADD_USERS_OK,
+    ADD_USERS_KO
 } from './actions';
 
 const initialState =
@@ -18,7 +21,8 @@ const initialState =
     users: {
         isFetching: false,
         didInvalidate: false,
-        usersList: []
+        usersList: [],
+        errorMessage: ''
     }
 };
 
@@ -30,6 +34,9 @@ function store(state = initialState, action) {
         case LOGOUT_REQUEST:
             return { ...state, login: login(state, action) };
         case USERS_LIST_RECEIVED:
+        case ADD_USERS_REQUEST:
+        case ADD_USERS_OK:
+        case ADD_USERS_KO:
             return { ...state, users: users(state, action) };
         default:
             return state;
@@ -76,8 +83,15 @@ function users(state, action) {
             return {
                 isFetching: false,
                 didInvalidate: true,
-                usersList: action.data
+                usersList: action.data.map((user, index) => { user.id = index; return user; }),
+                errorMessage: ''
             };
+        case ADD_USERS_REQUEST:
+            return { ...state.users, isFetching: true, errorMessage: '' };
+        case ADD_USERS_KO:
+            return { ...state.users, isFetching: false, errorMessage: action.data };
+        case ADD_USERS_OK:
+            return { ...state.users, usersList: action.data, isFetching: false, errorMessage: '' };
         default:
             return state;
     }
