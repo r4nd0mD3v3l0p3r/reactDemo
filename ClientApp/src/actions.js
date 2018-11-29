@@ -7,6 +7,11 @@ export const USERS_LIST_RECEIVED = 'USERS_LIST_RECEIVED';
 export const ADD_USERS_REQUEST = 'ADD_USERS_REQUEST';
 export const ADD_USERS_OK = 'ADD_USERS_OK';
 export const ADD_USERS_KO = 'ADD_USERS_KO';
+export const EDIT_USER_REQUEST = 'EDIT_USER_REQUEST';
+export const EDIT_USER_OK = 'EDIT_USER_OK';
+export const EDIT_USER_KO = 'EDIT_USER_KO';
+const USERS_ENDPOINT = '/api/users';
+const LOGIN_ENDPOINT = '/api/login';
 
 export function loginRequest(data) {
     return {
@@ -44,7 +49,7 @@ export function login(data) {
     return dispatch => {
         dispatch(loginRequest(data));
 
-        return axios.post('/api/login', {
+        return axios.post(LOGIN_ENDPOINT, {
             name: data.name,
             password: data.password
         })
@@ -65,7 +70,7 @@ export function login(data) {
 export function loadUsersList() {
     return dispatch => {
 
-        return axios.get('/api/users')
+        return axios.get(USERS_ENDPOINT)
             .then((response) => {
                 dispatch(usersListReceived(response.data));
             });
@@ -92,15 +97,44 @@ export function addUsersKo(data) {
     };
 }
 
+export function editUserRequest() {
+    return {
+        type: EDIT_USER_REQUEST
+    };
+}
+
+export function editUserOk(data) {
+    return {
+        type: EDIT_USER_OK,
+        data
+    };
+}
+
+export function editUserKo(data) {
+    return {
+        type: EDIT_USER_KO,
+        data
+    };
+}
+
 export function addUsers(data) {
     return dispatch => {
         dispatch(addUsersRequest());
-        return axios.post('/api/users', { name: data.name, password: '' })
+        return axios.post(USERS_ENDPOINT, { name: data.name, password: '' })
             .then((response) => {
                 dispatch(addUsersOk(response.data));
             })
             .catch((error) => {
                 dispatch(addUsersKo(error.response.data));
             });
+    };
+}
+
+export function editUser() {
+    return dispatch => {
+        dispatch(editUserRequest());
+        return axios.put(USERS_ENDPOINT, {})
+            .then((response) => { })
+            .catch((error) => { });
     };
 }

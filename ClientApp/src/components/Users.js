@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import MenuAppBar from './MenuAppBar';
 import PropTypes from "prop-types";
-import { loadUsersList, addUsers } from '../actions';
+import { loadUsersList, addUsers, editUser } from '../actions';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -36,6 +36,7 @@ class Users extends React.PureComponent {
         this.state = {
             columns: [
                 { name: 'name', title: 'Name' },
+                { name: 'password', title : 'Password'}
             ],
             usersList: [],
             errorMessage: ''
@@ -53,12 +54,13 @@ class Users extends React.PureComponent {
     }
 
     commitChanges = ({ added, changed, deleted }) => {
-        let { usersList, dispatch } = this.props;
+        const { usersList, dispatch } = this.props;
+
         if (added) {
             dispatch(addUsers(added[0]));
         }
         if (changed) {
-            usersList = usersList.map(row => (changed[row.id] ? { ...row, ...changed[row.id] } : row));
+            dispatch(editUser(changed[0]));
         }
         if (deleted) {
             const deletedSet = new Set(deleted);
@@ -83,7 +85,7 @@ class Users extends React.PureComponent {
                             rows={usersList}
                             columns={columns}
                         >
-                            <FilteringState defaultFilters={[]} />
+                            <FilteringState defaultFilters={[]} columnExtensions={[{ columnName: 'password', filteringEnabled: false }]} />
                             <EditingState
                                 onCommitChanges={this.commitChanges}
                             />
@@ -105,7 +107,7 @@ class Users extends React.PureComponent {
                         vertical: 'bottom',
                         horizontal: 'right',
                     }}
-                    open={errorMessage}
+                    open={errorMessage > 0}
                     autoHideDuration={3000}
                     onClose={this.handleSnackbarClose}
                     ContentProps={{
