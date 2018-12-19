@@ -10,7 +10,13 @@ export const ADD_USERS_KO = 'ADD_USERS_KO';
 export const EDIT_USER_REQUEST = 'EDIT_USER_REQUEST';
 export const EDIT_USER_OK = 'EDIT_USER_OK';
 export const EDIT_USER_KO = 'EDIT_USER_KO';
+export const DELETE_USER_REQUEST = 'DELETE_USER_REQUEST';
+export const DELETE_USER_OK = 'DELETE_USER_OK';
+export const DELETE_USER_KO = 'DELETE_USER_KO';
+export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
+export const LOAD_USER_OK = 'LOAD_USER_OK';
 const USERS_ENDPOINT = '/api/users';
+const USER_ENDPOINT = '/api/user';
 const LOGIN_ENDPOINT = '/api/login';
 
 export function loginRequest(data) {
@@ -67,16 +73,6 @@ export function login(data) {
     };
 }
 
-export function loadUsersList() {
-    return dispatch => {
-
-        return axios.get(USERS_ENDPOINT)
-            .then((response) => {
-                dispatch(usersListReceived(response.data));
-            });
-    };
-}
-
 export function addUsersRequest() {
     return {
         type: ADD_USERS_REQUEST
@@ -117,6 +113,48 @@ export function editUserKo(data) {
     };
 }
 
+export function deleteUserRequest() {
+    return {
+        type: DELETE_USER_REQUEST
+    };
+}
+
+export function deleteUserOk(data) {
+    return {
+        type: DELETE_USER_OK,
+        data
+    };
+}
+
+export function deleteUserKo() {
+    return {
+        type: DELETE_USER_KO
+    };
+}
+
+export function loadUsersList() {
+    return dispatch => {
+
+        return axios.get(USERS_ENDPOINT)
+            .then((response) => {
+                dispatch(usersListReceived(response.data));
+            });
+    };
+}
+
+export function loadUserRequest() {
+    return {
+        type: LOAD_USER_REQUEST
+    };
+}
+
+export function userReceived(data) {
+    return {
+        type: LOAD_USER_OK,
+        data
+    };
+}
+
 export function addUsers(data) {
     return dispatch => {
         dispatch(addUsersRequest());
@@ -136,5 +174,25 @@ export function editUser() {
         return axios.put(USERS_ENDPOINT, {})
             .then((response) => { })
             .catch((error) => { });
+    };
+}
+
+export function deleteUser(data) {
+    return dispatch => {
+        dispatch(deleteUserRequest());
+        return axios.delete(USERS_ENDPOINT, { params: { id: data.id } })
+            .then((response) => {
+                dispatch(deleteUserOk(response.data));
+            });
+    };
+}
+
+export function loadUser(data) {
+    return dispatch => {
+        dispatch(loadUserRequest());
+        return axios.get(USER_ENDPOINT, { params: { id: data.id } })
+            .then((response) => {
+                dispatch(userReceived(response.data));
+            });
     };
 }

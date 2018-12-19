@@ -1,8 +1,7 @@
-﻿using MongoDB.Driver;
-using MongoDB.Driver.Builders;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using reactDemo.Core.Services.Mongo;
 using reactDemo.Core.Services.Mongo.Collections;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,9 +17,14 @@ namespace reactDemo.Core.Repositories
             dbInitializer = dBInitializer;
         }
 
-        public async Task<User> GetUserAsync(string name, string password)
+        public async Task<User> GetUserByIdAsync(string id)
         {
-            return (await GetCollection().FindAsync(x => x.Name == name && x.Password == password)).FirstOrDefault();
+            return (await GetCollection().FindAsync(x => x.Id == new ObjectId(id))).FirstOrDefault();
+        }
+
+        public async Task<User> GetUserByNameAsync(string name)
+        {
+            return (await GetCollection().FindAsync(x => x.Name == name)).FirstOrDefault();
         }
 
         public async Task<UserResult> AddUserAsync(string name, string password)
@@ -37,9 +41,9 @@ namespace reactDemo.Core.Repositories
             return UserResult.Ok;
         }
 
-        public async Task DeleteUserAsync(string name)
+        public async Task DeleteUserAsync(string id)
         {
-            await GetCollection().DeleteOneAsync(x => x.Name == name);
+            await GetCollection().DeleteOneAsync(x => x.Id == new ObjectId(id));
         }
 
         public IEnumerable<User> GetAllUsers()
@@ -47,9 +51,9 @@ namespace reactDemo.Core.Repositories
             return GetCollection().AsQueryable();
         }
 
-        public async Task<bool> ChangeUserPasswordAsync(string name, string password)
+        public async Task<bool> ChangeUserPasswordAsync(string id, string password)
         {
-            var result = await GetCollection().UpdateOneAsync(x => x.Name == name, Builders<User>.Update.Set(x => x.Password, password));
+            var result = await GetCollection().UpdateOneAsync(x => x.Id == new ObjectId(id), Builders<User>.Update.Set(x => x.Password, password));
 
             return result.IsAcknowledged && result.MatchedCount > 0;
         }

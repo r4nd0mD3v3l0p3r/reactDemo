@@ -6,10 +6,11 @@ namespace reactDemo.Core.Repositories
 {
     public interface IUsersRepository
     {
-        Task<User> GetUserAsync(string name, string password);
+        Task<User> GetUserByIdAsync(string id);
+        Task<User> GetUserByNameAsync(string name);
         Task<UserResult> AddUserAsync(string name, string password);
         IEnumerable<User> GetAllUsers();
-        Task DeleteUserAsync(string name);
-        Task<bool> ChangeUserPasswordAsync(string name, string password);
+        Task DeleteUserAsync(string id);
+        Task<bool> ChangeUserPasswordAsync(string id, string password);
     }
 }

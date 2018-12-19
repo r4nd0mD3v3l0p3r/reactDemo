@@ -36,17 +36,17 @@ namespace reactDemo.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteUserAsync(string name)
+        public async Task<IActionResult> DeleteUserAsync(string id)
         {
-            await userRepository.DeleteUserAsync(name);
+            await userRepository.DeleteUserAsync(id);
 
-            return Ok();
+            return Ok(AllUsers());
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUserPasswordAsync(string name, string password)
+        public async Task<IActionResult> UpdateUserPasswordAsync(string id, string password)
         {
-            if (await userRepository.ChangeUserPasswordAsync(name, password))
+            if (await userRepository.ChangeUserPasswordAsync(id, password))
                 return Ok();
 
             return StatusCode(500);
@@ -54,7 +54,7 @@ namespace reactDemo.Controllers
 
         IEnumerable<UserModel> AllUsers()
         {
-            return userRepository.GetAllUsers().Select(x => new UserModel { Name = x.Name, Password = x.Password });
+            return userRepository.GetAllUsers().Select(x => new UserModel { Id = x.Id.ToString(), Name = x.Name });
         }
     }
 }

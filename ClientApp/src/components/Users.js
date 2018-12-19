@@ -3,28 +3,34 @@ import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import MenuAppBar from './MenuAppBar';
 import PropTypes from "prop-types";
-import { loadUsersList, addUsers, editUser } from '../actions';
+import { loadUsersList, addUsers, editUser, deleteUser } from '../actions';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import Snackbar from '@material-ui/core/Snackbar';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Button from "@material-ui/core/Button";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import User from './User';
+import { Link } from "react-router-dom";
 
-import {
-    FilteringState,
-    IntegratedFiltering,
-    EditingState
-} from '@devexpress/dx-react-grid';
-import {
-    Grid,
-    Table,
-    TableHeaderRow,
-    TableFilterRow,
-    TableEditRow,
-    TableEditColumn,
-} from '@devexpress/dx-react-grid-material-ui';
 
 const styles = theme => ({
-    root: {
-        display: "flex"
+    button: {
+        margin: theme.spacing.unit,
+    },
+    leftIcon: {
+        marginRight: theme.spacing.unit,
+    },
+    rightIcon: {
+        marginLeft: theme.spacing.unit,
+    },
+    iconSmall: {
+        fontSize: 20,
     },
 });
 
@@ -34,10 +40,6 @@ class Users extends React.PureComponent {
         super(props);
 
         this.state = {
-            columns: [
-                { name: 'name', title: 'Name' },
-                { name: 'password', title : 'Password'}
-            ],
             usersList: [],
             errorMessage: ''
         };
@@ -53,53 +55,57 @@ class Users extends React.PureComponent {
         this.setState({ errorMessage: nextProps.errorMessage });
     }
 
-    commitChanges = ({ added, changed, deleted }) => {
-        const { usersList, dispatch } = this.props;
-
-        if (added) {
-            dispatch(addUsers(added[0]));
-        }
-        if (changed) {
-            dispatch(editUser(changed[0]));
-        }
-        if (deleted) {
-            const deletedSet = new Set(deleted);
-            usersList = usersList.filter(row => !deletedSet.has(row.id));
-        }
-        this.setState({ usersList });
-    }
-
     handleSnackbarClose = (event, reason) => {
         this.setState({ errorMessage: '' });
     };
 
+    edit = name => {
+
+    };
+
+    delete = row => {
+        const { dispatch } = this.props;
+        dispatch(deleteUser({ id: row.id }));
+    };
+
     render() {
-        const { columns, errorMessage } = this.state;
-        const { usersList, isFetching } = this.props;
+        const { errorMessage } = this.state;
+        const { usersList, isFetching, classes } = this.props;
 
         return (
             <React.Fragment>
                 <MenuAppBar>
                     <BlockUi tag="div" blocking={isFetching}>
-                        <Grid
-                            rows={usersList}
-                            columns={columns}
-                        >
-                            <FilteringState defaultFilters={[]} columnExtensions={[{ columnName: 'password', filteringEnabled: false }]} />
-                            <EditingState
-                                onCommitChanges={this.commitChanges}
-                            />
-                            <IntegratedFiltering />
-                            <Table />
-                            <TableHeaderRow />
-                            <TableFilterRow />
-                            <TableEditRow />
-                            <TableEditColumn
-                                showAddCommand
-                                showEditCommand
-                                showDeleteCommand
-                            />
-                        </Grid>
+                        <Table className={classes.table}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>User Name</TableCell>
+                                    <TableCell align="right">Actions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {usersList.map(row => {
+                                    return (
+                                        <TableRow key={row.id}>
+                                            <TableCell component="th" scope="row">
+                                                {row.name}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Button variant="contained" className={classes.button} component={Link} to={`/user/${row.id}`}>
+                                                    Edit
+                                                    <EditIcon className={classes.rightIcon} />
+                                                </Button>
+                                                <Button variant="contained" className={classes.button} onClick={(() => this.delete(row))}>
+                                                    Delete
+                                                    <DeleteIcon className={classes.rightIcon}/>
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+
                     </BlockUi>
                 </MenuAppBar>
                 <Snackbar
@@ -107,7 +113,7 @@ class Users extends React.PureComponent {
                         vertical: 'bottom',
                         horizontal: 'right',
                     }}
-                    open={errorMessage > 0}
+                    open={!!errorMessage}
                     autoHideDuration={3000}
                     onClose={this.handleSnackbarClose}
                     ContentProps={{

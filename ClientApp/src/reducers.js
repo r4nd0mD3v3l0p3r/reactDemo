@@ -7,7 +7,12 @@ import {
     USERS_LIST_RECEIVED,
     ADD_USERS_REQUEST,
     ADD_USERS_OK,
-    ADD_USERS_KO
+    ADD_USERS_KO,
+    DELETE_USER_REQUEST,
+    DELETE_USER_OK,
+    DELETE_USER_KO,
+    LOAD_USER_OK,
+    LOAD_USER_REQUEST
 } from './actions';
 
 const initialState =
@@ -23,6 +28,11 @@ const initialState =
         didInvalidate: false,
         usersList: [],
         errorMessage: ''
+    },
+    user: {
+        id: '',
+        isFetching: false,
+        message: ''
     }
 };
 
@@ -37,7 +47,13 @@ function store(state = initialState, action) {
         case ADD_USERS_REQUEST:
         case ADD_USERS_OK:
         case ADD_USERS_KO:
+        case DELETE_USER_REQUEST:
+        case DELETE_USER_OK:
+        case DELETE_USER_KO:
             return { ...state, users: users(state, action) };
+        case LOAD_USER_REQUEST:
+        case LOAD_USER_OK:
+            return { ...state, user: user(state, action) };
         default:
             return state;
     }
@@ -83,7 +99,7 @@ function users(state, action) {
             return {
                 isFetching: false,
                 didInvalidate: true,
-                usersList: action.data.map((user, index) => { user.id = index; return user; }),
+                usersList: action.data,
                 errorMessage: ''
             };
         case ADD_USERS_REQUEST:
@@ -92,6 +108,23 @@ function users(state, action) {
             return { ...state.users, isFetching: false, errorMessage: action.data };
         case ADD_USERS_OK:
             return { ...state.users, usersList: action.data, isFetching: false, errorMessage: '' };
+        case DELETE_USER_REQUEST:
+            return { ...state.users, isFetching: true, errorMessage: '' };
+        case DELETE_USER_KO:
+            return { ...state.users, isFetching: false, errorMessage: action.data };
+        case DELETE_USER_OK:
+            return { ...state.users, usersList: action.data, isFetching: false, errorMessage: 'User deleted' };
+        default:
+            return state;
+    }
+}
+
+function user(state, action) {
+    switch (action.type) {
+        case LOAD_USER_REQUEST:
+            return { ...state.user, isFetching: true, id: '' };
+        case LOAD_USER_OK:
+            return { ...state.user, isFetching: false, user: action.data };
         default:
             return state;
     }

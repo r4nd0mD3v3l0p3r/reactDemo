@@ -6,6 +6,7 @@ import configureStore from './configureStore';
 import Home from './components/Home';
 import Login from './components/Login';
 import Users from './components/Users';
+import User from './components/User';
 
 const store = configureStore();
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
@@ -20,6 +21,7 @@ export default class App extends Component {
                         <Route exact path='/' component={Home} />
                         <Route exact path='/login' component={Login} />
                         <Route exact path='/users' component={Users} />
+                        <Route exact path='/user/:id' component={User} />
                     </Switch>
                 </BrowserRouter>
             </Provider>

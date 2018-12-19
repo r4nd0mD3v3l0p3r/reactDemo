@@ -9,24 +9,25 @@ using System.Threading.Tasks;
 namespace reactDemo.Controllers
 {
     [Route("api/[controller]")]
-    public class LoginController : Controller
+    public class UserController : Controller
     {
         readonly IUsersRepository userRepository;
 
-        public LoginController(IUsersRepository userRepository)
+        public UserController(IUsersRepository userRepository)
         {
             this.userRepository = userRepository;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> LoginAsync([FromBody] UserModel user)
+        [HttpGet]
+        public async Task<IActionResult> UserAsync(string id)
         {
-            var dbUser = await userRepository.GetUserByNameAsync(user.Name);
+            var user = await userRepository.GetUserByIdAsync(id);
 
-            if (dbUser == null)
-                return StatusCode(401);
-
-            return Ok();
+            return Ok(new UserModel
+            {
+                Id = user.Id.ToString(),
+                Name = user.Name
+            });
         }
     }
 }

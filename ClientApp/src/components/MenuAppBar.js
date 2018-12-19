@@ -15,7 +15,6 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
 import GroupIcon from "@material-ui/icons/Group";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
