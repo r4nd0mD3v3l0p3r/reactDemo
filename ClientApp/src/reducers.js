@@ -15,7 +15,11 @@ import {
     LOAD_USER_REQUEST,
     CHANGE_USER_PASSWORD_REQUEST,
     CHANGE_USER_PASSWORD_KO,
-    CHANGE_USER_PASSWORD_OK
+    CHANGE_USER_PASSWORD_OK,
+    ADD_USER_REQUEST,
+    ADD_USER_OK,
+    ADD_USER_KO,
+    CREATE_USER
 } from './actions';
 
 const initialState =
@@ -62,6 +66,10 @@ function store(state = initialState, action) {
         case CHANGE_USER_PASSWORD_REQUEST:
         case CHANGE_USER_PASSWORD_OK:
         case CHANGE_USER_PASSWORD_KO:
+        case ADD_USER_REQUEST:
+        case ADD_USER_OK:
+        case ADD_USER_KO:
+        case CREATE_USER:
             return { ...state, user: user(state, action) };
         default:
             return state;
@@ -131,15 +139,24 @@ function users(state, action) {
 function user(state, action) {
     switch (action.type) {
         case LOAD_USER_REQUEST:
-            return { ...state.user, isFetching: true, id: '', edit: true };
+            return { ...state.user, isFetching: true, id: '', edit: true, showMessage: false };
         case LOAD_USER_OK:
-            return { ...state.user, isFetching: false, user: action.data, edit: true };
+            return { ...state.user, isFetching: false, user: action.data, edit: true, showMessage: false };
         case CHANGE_USER_PASSWORD_REQUEST:
             return { ...state.user, isFetching: true, showMessage: false };
         case CHANGE_USER_PASSWORD_OK:
             return { ...state.user, isFetching: false, message: 'Password changed', showMessage: true};
         case CHANGE_USER_PASSWORD_KO:
             return { ...state.user, isFetching: false, message: action.data, showMessage: true };
+        case ADD_USER_REQUEST:
+            return { ...state.user, isFetching: true, id: '', edit: false, showMessage: false };
+        case ADD_USER_OK:
+            return { ...state.user, isFetching: false, message: 'User added', showMessage: true };
+        case ADD_USER_KO:
+            return { ...state.user, isFetching: false, message: action.data, showMessage: true };
+        case CREATE_USER:
+            return {
+                user: { name: '', password: '', id: ''}, isFetching: false, edit: false, showMessage: false, id:'' };
         default:
             return state;
     }

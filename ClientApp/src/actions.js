@@ -15,6 +15,10 @@ export const DELETE_USER_OK = 'DELETE_USER_OK';
 export const DELETE_USER_KO = 'DELETE_USER_KO';
 export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
 export const LOAD_USER_OK = 'LOAD_USER_OK';
+export const ADD_USER_REQUEST = 'ADD_USER_REQUEST';
+export const ADD_USER_OK = 'ADD_USER_OK';
+export const ADD_USER_KO = 'ADD_USER_KO';
+export const CREATE_USER = 'CREATE_USER';
 
 const USERS_ENDPOINT = '/api/users';
 const USER_ENDPOINT = '/api/user';
@@ -124,6 +128,32 @@ export function userReceived(data) {
     };
 }
 
+export function addUserRequest() {
+    return {
+        type: ADD_USER_REQUEST
+    };
+}
+
+export function addUserOk(data) {
+    return {
+        type: ADD_USER_OK,
+        data
+    };
+}
+
+export function addUserKo(data) {
+    return {
+        type: ADD_USER_KO,
+        data
+    };
+}
+
+export function createUser() {
+    return {
+        type: CREATE_USER
+    };
+}
+
 export function loadUsersList() {
     return dispatch => {
 
@@ -198,6 +228,19 @@ export function loadUser(data) {
         return axios.get(USER_ENDPOINT, { params: { id: data.id } })
             .then((response) => {
                 dispatch(userReceived(response.data));
+            });
+    };
+}
+
+export function addUser(data) {
+    return dispatch => {
+        dispatch(addUserRequest());
+        return axios.post(USER_ENDPOINT, { name: data.name, password: data.password })
+            .then((response) => {
+                dispatch(addUserOk(response.data));
+            })
+            .catch((error) => {
+                dispatch(addUserKo(error.response.data));
             });
     };
 }

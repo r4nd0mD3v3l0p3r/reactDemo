@@ -15,7 +15,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import User from './User';
 import { Link } from "react-router-dom";
 
 
@@ -76,6 +75,10 @@ class Users extends React.PureComponent {
             <React.Fragment>
                 <MenuAppBar>
                     <BlockUi tag="div" blocking={isFetching}>
+                        <Button variant="contained" className={classes.button} component={Link} to={'/user'}>
+                            Create new user
+                            <EditIcon className={classes.rightIcon} />
+                        </Button>
                         <Table className={classes.table}>
                             <TableHead>
                                 <TableRow>
@@ -97,7 +100,7 @@ class Users extends React.PureComponent {
                                                 </Button>
                                                 <Button variant="contained" className={classes.button} onClick={(() => this.delete(row))}>
                                                     Delete
-                                                    <DeleteIcon className={classes.rightIcon}/>
+                                                    <DeleteIcon className={classes.rightIcon} />
                                                 </Button>
                                             </TableCell>
                                         </TableRow>

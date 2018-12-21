@@ -10,7 +10,7 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { changeUserPassword } from '../actions';
+import { changeUserPassword, addUser, createUser } from '../actions';
 import Snackbar from '@material-ui/core/Snackbar';
 
 const styles = theme => ({
@@ -34,13 +34,20 @@ class User extends React.Component {
             id: '',
             name: '',
             currentPassword: '',
-            newPassword: ''
+            newPassword: '',
+            password: ''
         };
 
     componentDidMount() {
         const { dispatch, match } = this.props;
+        const id = match.params.id;
 
-        dispatch(loadUser({ id: match.params.id }));
+        if (typeof id === "undefined") {
+            dispatch(createUser());
+        }
+        else {
+            dispatch(loadUser({ id }));
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -66,9 +73,16 @@ class User extends React.Component {
         dispatch(changeUserPassword({ id, currentPassword, newPassword }));
     }
 
+    handleCreate = () => {
+        const { name, password } = this.state;
+        const { dispatch } = this.props;
+
+        dispatch(addUser({ name, password }));
+    }
+
     render() {
-        const { isFetching, message, edit, showMessage, invalidCredentials } = this.props;
-        const { name, currentPassword, newPassword } = this.state;
+        const { isFetching, message, edit, showMessage } = this.props;
+        const { name, currentPassword, newPassword, password } = this.state;
         let content;
 
         if (edit) {
@@ -81,7 +95,7 @@ class User extends React.Component {
                 >
                     <Typography component="h3" variant="h3">
                         Change Password
-                        </Typography>
+                    </Typography>
                     <TextField
                         id="name"
                         label="Name"
@@ -90,6 +104,7 @@ class User extends React.Component {
                         name="name"
                         margin="normal"
                         onChange={this.handleChange}
+                        disabled={true}
                     />
                     <TextField
                         id="currentPassword"
@@ -111,9 +126,6 @@ class User extends React.Component {
                         name="newPassword"
                         onChange={this.handleChange}
                     />
-                    {invalidCredentials && <span component="h5" variant="h5" color="red">
-                        Invalid Credentials
-                    </span>}
                     <Button variant="contained" onClick={this.handleEdit}>
                         Edit
                     </Button>
@@ -128,8 +140,8 @@ class User extends React.Component {
                 alignItems="center"
             >
                 <Typography component="h3" variant="h3">
-                    Welcome. Please Login
-                        </Typography>
+                    Add new user
+                </Typography>
                 <TextField
                     id="name"
                     label="Name"
@@ -140,21 +152,18 @@ class User extends React.Component {
                     onChange={this.handleChange}
                 />
                 <TextField
-                    id="currentPassword"
+                    id="password"
                     label="Password"
                     className={styles.textField}
-                    value={currentPassword}
+                    value={password}
                     margin="normal"
                     type="password"
-                    name="currentPassword"
+                    name="password"
                     onChange={this.handleChange}
                 />
-                {invalidCredentials && <span component="h5" variant="h5" color="red">
-                    Invalid Credentials
-                    </span>}
-                <Button variant="contained" className={styles.loginButton} onClick={this.handleLogin}>
-                    Login
-                    </Button>
+                <Button variant="contained" className={styles.loginButton} onClick={this.handleCreate}>
+                    Create New User
+                </Button>
             </Grid>);
         }
 

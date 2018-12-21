@@ -21,20 +21,6 @@ namespace reactDemo.Controllers
         [HttpGet]
         public IActionResult GetUsers() => base.Ok(AllUsers());
 
-        [HttpPost]
-        public async Task<IActionResult> AddUserAsync([FromBody] UserModel user)
-        {
-            switch (await userRepository.AddUserAsync(user.Name, user.Password))
-            {
-                case UserResult.Ok:
-                    return Ok(AllUsers());
-                case UserResult.UserAlreadyExists:
-                    return StatusCode(400, "A user with the same name already exists.");
-                default:
-                    return StatusCode(400, "An error occurred. Try again later.");
-            }
-        }
-
         [HttpDelete]
         public async Task<IActionResult> DeleteUserAsync(string id)
         {
