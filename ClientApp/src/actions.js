@@ -7,14 +7,15 @@ export const USERS_LIST_RECEIVED = 'USERS_LIST_RECEIVED';
 export const ADD_USERS_REQUEST = 'ADD_USERS_REQUEST';
 export const ADD_USERS_OK = 'ADD_USERS_OK';
 export const ADD_USERS_KO = 'ADD_USERS_KO';
-export const EDIT_USER_REQUEST = 'EDIT_USER_REQUEST';
-export const EDIT_USER_OK = 'EDIT_USER_OK';
-export const EDIT_USER_KO = 'EDIT_USER_KO';
+export const CHANGE_USER_PASSWORD_REQUEST = 'CHANGE_USER_PASSWORD_REQUEST';
+export const CHANGE_USER_PASSWORD_OK = 'CHANGE_USER_PASSWORD_OK';
+export const CHANGE_USER_PASSWORD_KO = 'CHANGE_USER_PASSWORD_KO';
 export const DELETE_USER_REQUEST = 'DELETE_USER_REQUEST';
 export const DELETE_USER_OK = 'DELETE_USER_OK';
 export const DELETE_USER_KO = 'DELETE_USER_KO';
 export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
 export const LOAD_USER_OK = 'LOAD_USER_OK';
+
 const USERS_ENDPOINT = '/api/users';
 const USER_ENDPOINT = '/api/user';
 const LOGIN_ENDPOINT = '/api/login';
@@ -51,28 +52,6 @@ export function usersListReceived(data) {
     };
 }
 
-export function login(data) {
-    return dispatch => {
-        dispatch(loginRequest(data));
-
-        return axios.post(LOGIN_ENDPOINT, {
-            name: data.name,
-            password: data.password
-        })
-            .then(function (response) {
-                if (response.status === 200) {
-                    dispatch(loginOk());
-                }
-                else {
-                    dispatch(loginKo());
-                }
-            })
-            .catch(function (error) {
-                dispatch(loginKo());
-            });
-    };
-}
-
 export function addUsersRequest() {
     return {
         type: ADD_USERS_REQUEST
@@ -93,22 +72,22 @@ export function addUsersKo(data) {
     };
 }
 
-export function editUserRequest() {
+export function changeUserPasswordRequest() {
     return {
-        type: EDIT_USER_REQUEST
+        type: CHANGE_USER_PASSWORD_REQUEST
     };
 }
 
-export function editUserOk(data) {
+export function changeUserPasswordOk(data) {
     return {
-        type: EDIT_USER_OK,
+        type: CHANGE_USER_PASSWORD_OK,
         data
     };
 }
 
-export function editUserKo(data) {
+export function changeUserPasswordKo(data) {
     return {
-        type: EDIT_USER_KO,
+        type: CHANGE_USER_PASSWORD_KO,
         data
     };
 }
@@ -132,16 +111,6 @@ export function deleteUserKo() {
     };
 }
 
-export function loadUsersList() {
-    return dispatch => {
-
-        return axios.get(USERS_ENDPOINT)
-            .then((response) => {
-                dispatch(usersListReceived(response.data));
-            });
-    };
-}
-
 export function loadUserRequest() {
     return {
         type: LOAD_USER_REQUEST
@@ -152,6 +121,38 @@ export function userReceived(data) {
     return {
         type: LOAD_USER_OK,
         data
+    };
+}
+
+export function loadUsersList() {
+    return dispatch => {
+
+        return axios.get(USERS_ENDPOINT)
+            .then((response) => {
+                dispatch(usersListReceived(response.data));
+            });
+    };
+}
+
+export function login(data) {
+    return dispatch => {
+        dispatch(loginRequest(data));
+
+        return axios.post(LOGIN_ENDPOINT, {
+            name: data.name,
+            password: data.password
+        })
+            .then(function (response) {
+                if (response.status === 200) {
+                    dispatch(loginOk());
+                }
+                else {
+                    dispatch(loginKo());
+                }
+            })
+            .catch(function (error) {
+                dispatch(loginKo());
+            });
     };
 }
 
@@ -168,12 +169,16 @@ export function addUsers(data) {
     };
 }
 
-export function editUser() {
+export function changeUserPassword(data) {
     return dispatch => {
-        dispatch(editUserRequest());
-        return axios.put(USERS_ENDPOINT, {})
-            .then((response) => { })
-            .catch((error) => { });
+        dispatch(changeUserPasswordRequest());
+        return axios.put(USER_ENDPOINT, { id: data.id, currentPassword: data.currentPassword, newPassword: data.newPassword })
+            .then((response) => {
+                dispatch(changeUserPasswordOk());
+            })
+            .catch((error) => {
+                dispatch(changeUserPasswordKo(error.response.data));
+            });
     };
 }
 

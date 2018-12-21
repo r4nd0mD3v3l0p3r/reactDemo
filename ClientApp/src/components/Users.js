@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import MenuAppBar from './MenuAppBar';
 import PropTypes from "prop-types";
-import { loadUsersList, addUsers, editUser, deleteUser } from '../actions';
+import { loadUsersList, deleteUser } from '../actions';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import Snackbar from '@material-ui/core/Snackbar';

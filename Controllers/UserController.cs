@@ -29,5 +29,28 @@ namespace reactDemo.Controllers
                 Name = user.Name
             });
         }
+
+        [HttpPut]
+        public async Task<IActionResult> EditUser([FromBody] UserModel userModel)
+        {
+            var user = await userRepository.GetUserByIdAsync(userModel.Id);
+
+            if (userModel.CurrentPassword != user.Password)
+            {
+                return StatusCode(400, "The current password you provided is wrong.");
+            }
+
+            await userRepository.ChangeUserPasswordAsync(userModel.Id, userModel.NewPassword);
+
+            return Ok();
+        }
+
+        public class UserModel
+        {
+            public string Id { get; set; }
+            public string CurrentPassword { get; set; }
+            public string NewPassword { get; set; }
+            public string Name { get; set; }
+        }
     }
 }

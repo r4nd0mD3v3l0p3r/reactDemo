@@ -12,7 +12,10 @@ import {
     DELETE_USER_OK,
     DELETE_USER_KO,
     LOAD_USER_OK,
-    LOAD_USER_REQUEST
+    LOAD_USER_REQUEST,
+    CHANGE_USER_PASSWORD_REQUEST,
+    CHANGE_USER_PASSWORD_KO,
+    CHANGE_USER_PASSWORD_OK
 } from './actions';
 
 const initialState =
@@ -32,7 +35,10 @@ const initialState =
     user: {
         id: '',
         isFetching: false,
-        message: ''
+        message: '',
+        showMessage: false,
+        edit: false,
+        user: undefined
     }
 };
 
@@ -53,6 +59,9 @@ function store(state = initialState, action) {
             return { ...state, users: users(state, action) };
         case LOAD_USER_REQUEST:
         case LOAD_USER_OK:
+        case CHANGE_USER_PASSWORD_REQUEST:
+        case CHANGE_USER_PASSWORD_OK:
+        case CHANGE_USER_PASSWORD_KO:
             return { ...state, user: user(state, action) };
         default:
             return state;
@@ -122,9 +131,15 @@ function users(state, action) {
 function user(state, action) {
     switch (action.type) {
         case LOAD_USER_REQUEST:
-            return { ...state.user, isFetching: true, id: '' };
+            return { ...state.user, isFetching: true, id: '', edit: true };
         case LOAD_USER_OK:
-            return { ...state.user, isFetching: false, user: action.data };
+            return { ...state.user, isFetching: false, user: action.data, edit: true };
+        case CHANGE_USER_PASSWORD_REQUEST:
+            return { ...state.user, isFetching: true, showMessage: false };
+        case CHANGE_USER_PASSWORD_OK:
+            return { ...state.user, isFetching: false, message: 'Password changed', showMessage: true};
+        case CHANGE_USER_PASSWORD_KO:
+            return { ...state.user, isFetching: false, message: action.data, showMessage: true };
         default:
             return state;
     }
