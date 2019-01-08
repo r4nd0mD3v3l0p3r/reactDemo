@@ -16,7 +16,11 @@ import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import { Link } from "react-router-dom";
-
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const styles = theme => ({
     button: {
@@ -40,7 +44,9 @@ class Users extends React.PureComponent {
 
         this.state = {
             usersList: [],
-            errorMessage: ''
+            errorMessage: '',
+            deletionDialogOpen: false,
+            selectedRowId: ''
         };
     }
 
@@ -58,17 +64,25 @@ class Users extends React.PureComponent {
         this.setState({ errorMessage: '' });
     };
 
-    edit = name => {
-
-    };
-
     delete = row => {
-        const { dispatch } = this.props;
-        dispatch(deleteUser({ id: row.id }));
+        this.setState({ selectedRowId: row.id, deletionDialogOpen: true });
     };
+
+    handleDeletionDialogClose = () => {
+        this.setState({ deletionDialogOpen: false });
+    }
+
+    handleDeletionDialogOk = () => {
+        const { dispatch } = this.props;
+        const { selectedRowId } = this.state;
+
+        this.handleDeletionDialogClose();
+
+        dispatch(deleteUser({ id: selectedRowId }));
+    }
 
     render() {
-        const { errorMessage } = this.state;
+        const { errorMessage, deletionDialogOpen } = this.state;
         const { usersList, isFetching, classes } = this.props;
 
         return (
@@ -126,6 +140,28 @@ class Users extends React.PureComponent {
                     action={[
                     ]}
                 />
+
+                <Dialog
+                    open={deletionDialogOpen}
+                    onClose={this.handleDeletionDialogClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"User Deletion"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Are you sure you want to delete the selected user?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleDeletionDialogClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.handleDeletionDialogOk} color="primary" autoFocus>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </React.Fragment>
         );
     }
