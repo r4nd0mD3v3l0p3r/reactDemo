@@ -89,6 +89,7 @@ class MenuAppBar extends React.Component {
         const { dispatch } = this.props;
 
         dispatch(logoutRequest());
+        localStorage.removeItem('user');
 
         history.push("/");
     };
@@ -176,9 +177,9 @@ class MenuAppBar extends React.Component {
 
 function mapStateToProps(state) {
     const { store } = state;
-    const { logged } = store.login || { logged: false };
+    const { logged, wrongAuthToken } = store.login || { logged: false, wrongAuthToken: false };
 
-    return { logged };
+    return { logged, wrongAuthToken };
 }
 
 MenuAppBar.propTypes = {

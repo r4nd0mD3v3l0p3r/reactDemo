@@ -1,8 +1,11 @@
 ﻿import axios from 'axios';
+import { authHeader } from './helpers/authHeader';
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_OK = 'LOGIN_OK';
 export const LOGIN_KO = 'LOGIN_KO';
 export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
+export const WRONG_AUTH_TOKEN = 'WRONG_AUTH_TOKEN';
+export const USERS_LIST_REQUESTED = 'USERS_LIST_REQUESTED';
 export const USERS_LIST_RECEIVED = 'USERS_LIST_RECEIVED';
 export const ADD_USERS_REQUEST = 'ADD_USERS_REQUEST';
 export const ADD_USERS_OK = 'ADD_USERS_OK';
@@ -19,6 +22,7 @@ export const ADD_USER_REQUEST = 'ADD_USER_REQUEST';
 export const ADD_USER_OK = 'ADD_USER_OK';
 export const ADD_USER_KO = 'ADD_USER_KO';
 export const CREATE_USER = 'CREATE_USER';
+const USER_LOCAL_STORAGE = 'user';
 
 const USERS_ENDPOINT = '/api/users';
 const USER_ENDPOINT = '/api/user';
@@ -46,6 +50,19 @@ export function loginKo() {
 export function logoutRequest() {
     return {
         type: LOGOUT_REQUEST
+    };
+}
+
+export function wrongAuthToken() {
+    return {
+        type: WRONG_AUTH_TOKEN
+    };
+}
+
+export function usersListRequested(data) {
+    return {
+        type: USERS_LIST_REQUESTED,
+        data
     };
 }
 
@@ -156,10 +173,13 @@ export function createUser() {
 
 export function loadUsersList() {
     return dispatch => {
-
-        return axios.get(USERS_ENDPOINT)
+        dispatch(usersListRequested());
+        return axios.get(USERS_ENDPOINT, { headers: authHeader() })
             .then((response) => {
                 dispatch(usersListReceived(response.data));
+            })
+            .catch(() => {
+                dispatch(wrongAuthToken());
             });
     };
 }
@@ -168,12 +188,10 @@ export function login(data) {
     return dispatch => {
         dispatch(loginRequest(data));
 
-        return axios.post(LOGIN_ENDPOINT, {
-            name: data.name,
-            password: data.password
-        })
+        return axios.post(LOGIN_ENDPOINT, { name: data.name, password: data.password }, { headers: authHeader() })
             .then(function (response) {
                 if (response.status === 200) {
+                    localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify(response.data));
                     dispatch(loginOk());
                 }
                 else {
@@ -189,12 +207,17 @@ export function login(data) {
 export function addUsers(data) {
     return dispatch => {
         dispatch(addUsersRequest());
-        return axios.post(USERS_ENDPOINT, { name: data.name, password: '' })
+        return axios.post(USERS_ENDPOINT, { name: data.name, password: '' }, { headers: authHeader() })
             .then((response) => {
                 dispatch(addUsersOk(response.data));
             })
             .catch((error) => {
-                dispatch(addUsersKo(error.response.data));
+                if (error.response.status === 401) {
+                    dispatch(wrongAuthToken());
+                }
+                else {
+                    dispatch(addUsersKo(error.response.data));
+                }
             });
     };
 }
@@ -202,12 +225,17 @@ export function addUsers(data) {
 export function changeUserPassword(data) {
     return dispatch => {
         dispatch(changeUserPasswordRequest());
-        return axios.put(USER_ENDPOINT, { id: data.id, currentPassword: data.currentPassword, newPassword: data.newPassword })
-            .then((response) => {
+        return axios.put(USER_ENDPOINT, { id: data.id, currentPassword: data.currentPassword, newPassword: data.newPassword }, { headers: authHeader() })
+            .then(() => {
                 dispatch(changeUserPasswordOk());
             })
             .catch((error) => {
-                dispatch(changeUserPasswordKo(error.response.data));
+                if (error.response.status === 401) {
+                    dispatch(wrongAuthToken());
+                }
+                else {
+                    dispatch(changeUserPasswordKo(error.response.data));
+                }
             });
     };
 }
@@ -215,9 +243,15 @@ export function changeUserPassword(data) {
 export function deleteUser(data) {
     return dispatch => {
         dispatch(deleteUserRequest());
-        return axios.delete(USERS_ENDPOINT, { params: { id: data.id } })
+        return axios.delete(USERS_ENDPOINT, { headers: authHeader(), params: { id: data.id } })
             .then((response) => {
-                dispatch(deleteUserOk(response.data));
+                if (response.status === 401) {
+                    dispatch(wrongAuthToken());
+                }
+                else {
+
+                    dispatch(deleteUserOk(response.data));
+                }
             });
     };
 }
@@ -225,9 +259,14 @@ export function deleteUser(data) {
 export function loadUser(data) {
     return dispatch => {
         dispatch(loadUserRequest());
-        return axios.get(USER_ENDPOINT, { params: { id: data.id } })
+        return axios.get(USER_ENDPOINT, { headers: authHeader(), params: { id: data.id } })
             .then((response) => {
-                dispatch(userReceived(response.data));
+                if (response.status === 401) {
+                    dispatch(wrongAuthToken());
+                }
+                else {
+                    dispatch(userReceived(response.data));
+                }
             });
     };
 }
@@ -235,12 +274,17 @@ export function loadUser(data) {
 export function addUser(data) {
     return dispatch => {
         dispatch(addUserRequest());
-        return axios.post(USER_ENDPOINT, { name: data.name, password: data.password })
+        return axios.post(USER_ENDPOINT, { name: data.name, password: data.password }, { headers: authHeader() })
             .then((response) => {
                 dispatch(addUserOk(response.data));
             })
             .catch((error) => {
-                dispatch(addUserKo(error.response.data));
+                if (error.response.status === 401) {
+                    dispatch(wrongAuthToken());
+                }
+                else {
+                    dispatch(addUserKo(error.response.data));
+                }
             });
     };
 }

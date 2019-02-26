@@ -53,7 +53,7 @@ class User extends React.Component {
     componentWillReceiveProps(nextProps) {
         const { user } = nextProps;
 
-        if (user == null)
+        if (user === undefined || user === null)
             return;
 
         this.setState({

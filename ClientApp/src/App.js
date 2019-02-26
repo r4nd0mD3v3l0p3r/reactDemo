@@ -8,6 +8,7 @@ import Login from './components/Login';
 import Users from './components/Users';
 import User from './components/User';
 import history from './components/History';
+import { PrivateRoute } from './components/PrivateRoute';
 
 const store = configureStore();
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
@@ -21,9 +22,9 @@ export default class App extends Component {
                     <Switch>
                         <Route exact path='/' component={Home} />
                         <Route exact path='/login' component={Login} />
-                        <Route exact path='/users' component={Users} />
-                        <Route exact path='/user/:id' component={User} />
-                        <Route exact path='/user' component={User} />
+                        <PrivateRoute exact path='/users' component={Users} />
+                        <PrivateRoute exact path='/user/:id' component={User} />
+                        <PrivateRoute exact path='/user' component={User} />
                     </Switch>
                 </Router>
             </Provider>

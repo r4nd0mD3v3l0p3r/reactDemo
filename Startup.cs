@@ -1,11 +1,15 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using reactDemo.Controllers;
 using reactDemo.Core.Repositories;
 using reactDemo.Core.Services.Mongo;
+using System.Text;
 
 namespace reactDemo
 {
@@ -31,6 +35,8 @@ namespace reactDemo
 
             services.AddSingleton<IDBInitializer>(new DBInitializer());
             services.AddSingleton<IUsersRepository, UserRepository>();
+
+            SetupJWT(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +55,7 @@ namespace reactDemo
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
@@ -65,6 +72,30 @@ namespace reactDemo
                 {
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
+            });
+
+        }
+
+        static void SetupJWT(IServiceCollection services)
+        {
+            var key = Encoding.ASCII.GetBytes(LoginController.Secret);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
             });
         }
     }

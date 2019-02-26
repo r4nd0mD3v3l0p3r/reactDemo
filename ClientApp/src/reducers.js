@@ -19,7 +19,10 @@ import {
     ADD_USER_REQUEST,
     ADD_USER_OK,
     ADD_USER_KO,
-    CREATE_USER
+    CREATE_USER,
+    WRONG_AUTH_TOKEN,
+
+    USERS_LIST_REQUESTED
 } from './actions';
 
 const initialState =
@@ -28,7 +31,8 @@ const initialState =
         isFetching: false,
         didInvalidate: false,
         logged: false,
-        invalidCredentials: false
+        invalidCredentials: false,
+        wrongAuthToken: false
     },
     users: {
         isFetching: false,
@@ -52,6 +56,7 @@ function store(state = initialState, action) {
         case LOGIN_OK:
         case LOGIN_KO:
         case LOGOUT_REQUEST:
+        case WRONG_AUTH_TOKEN:
             return { ...state, login: login(state, action) };
         case USERS_LIST_RECEIVED:
         case ADD_USERS_REQUEST:
@@ -60,6 +65,7 @@ function store(state = initialState, action) {
         case DELETE_USER_REQUEST:
         case DELETE_USER_OK:
         case DELETE_USER_KO:
+        case USERS_LIST_REQUESTED:
             return { ...state, users: users(state, action) };
         case LOAD_USER_REQUEST:
         case LOAD_USER_OK:
@@ -83,27 +89,39 @@ function login(state, action) {
                 isFetching: false,
                 didInvalidate: true,
                 logged: true,
-                invalidCredentials: false
+                invalidCredentials: false,
+                wrongAuthToken: false
             };
         case LOGIN_REQUEST:
             return {
                 isFetching: false,
                 didInvalidate: false,
-                invalidCredentials: false
+                invalidCredentials: false,
+                wrongAuthToken: false
             };
         case LOGIN_KO:
             return {
                 isFetching: false,
                 didInvalidate: false,
                 logged: false,
-                invalidCredentials: true
+                invalidCredentials: true,
+                wrongAuthToken: false
             };
         case LOGOUT_REQUEST:
             return {
                 isFetching: false,
                 didInvalidate: false,
                 logged: false,
-                invalidCredentials: false
+                invalidCredentials: false,
+                wrongAuthToken: false
+            };
+        case WRONG_AUTH_TOKEN:
+            return {
+                isFetching: false,
+                didInvalidate: false,
+                logged: false,
+                invalidCredentials: false,
+                wrongAuthToken: true
             };
         default:
             return state;
@@ -113,12 +131,11 @@ function login(state, action) {
 function users(state, action) {
     switch (action.type) {
         case USERS_LIST_RECEIVED:
-            return {
-                isFetching: false,
-                didInvalidate: true,
-                usersList: action.data,
-                errorMessage: ''
-            };
+            return { isFetching: false, didInvalidate: true, usersList: action.data, errorMessage: '' };
+        case LOAD_USER_REQUEST:
+            return { isFetching: true, didInvalidate: true, errorMessage: '' };
+        case USERS_LIST_REQUESTED:
+            return { ...state.users, isFetching: true, errorMessage: '' };
         case ADD_USERS_REQUEST:
             return { ...state.users, isFetching: true, errorMessage: '' };
         case ADD_USERS_KO:
@@ -141,7 +158,7 @@ function user(state, action) {
         case LOAD_USER_REQUEST:
             return { ...state.user, isFetching: true, id: '', edit: true, showMessage: false };
         case LOAD_USER_OK:
-            return { ...state.user, isFetching: false, user: action.data, edit: true, showMessage: false };
+            return { ...state.user, isFetching: false, user: action.data, edit: true, showMessage: false, id: action.data.id };
         case CHANGE_USER_PASSWORD_REQUEST:
             return { ...state.user, isFetching: true, showMessage: false };
         case CHANGE_USER_PASSWORD_OK:
@@ -155,8 +172,7 @@ function user(state, action) {
         case ADD_USER_KO:
             return { ...state.user, isFetching: false, message: action.data, showMessage: true };
         case CREATE_USER:
-            return {
-                user: { name: '', password: '', id: ''}, isFetching: false, edit: false, showMessage: false, id:'' };
+            return { user: { name: '', password: '', id: ''}, isFetching: false, edit: false, showMessage: false, id:'' };
         default:
             return state;
     }
