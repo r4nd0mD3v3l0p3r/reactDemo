@@ -20,6 +20,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { logoutRequest } from '../actions';
+import history from './History';
 
 const drawerWidth = 240;
 
@@ -80,8 +81,6 @@ const styles = theme => ({
     }
 });
 
-
-
 class MenuAppBar extends React.Component {
 
     state = { open: false };
@@ -90,7 +89,9 @@ class MenuAppBar extends React.Component {
         const { dispatch } = this.props;
 
         dispatch(logoutRequest());
-    }
+
+        history.push("/");
+    };
 
     handleDrawerOpen = () => {
         this.setState({ open: true });

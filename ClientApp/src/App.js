@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom'
+import { Route, Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { Switch } from 'react-router';
 import configureStore from './configureStore';
@@ -7,6 +7,7 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Users from './components/Users';
 import User from './components/User';
+import history from './components/History';
 
 const store = configureStore();
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
@@ -16,7 +17,7 @@ export default class App extends Component {
     render() {
         return (
             <Provider store={store}>
-                <BrowserRouter>
+                <Router history={history}>
                     <Switch>
                         <Route exact path='/' component={Home} />
                         <Route exact path='/login' component={Login} />
@@ -24,7 +25,7 @@ export default class App extends Component {
                         <Route exact path='/user/:id' component={User} />
                         <Route exact path='/user' component={User} />
                     </Switch>
-                </BrowserRouter>
+                </Router>
             </Provider>
         );
     }
