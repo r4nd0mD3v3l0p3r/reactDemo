@@ -21,8 +21,11 @@ import {
     ADD_USER_KO,
     CREATE_USER,
     WRONG_AUTH_TOKEN,
-
-    USERS_LIST_REQUESTED
+    USERS_LIST_REQUESTED,
+    FETCH_FORUM_THREADS_IN_PROGRESS,
+    FETCH_FORUM_THREADS_OK,
+    FETCH_FORUM_THREAD_POSTS_IN_PROGRESS,
+    FETCH_FORUM_THREAD_POSTS_OK
 } from './actions';
 
 const initialState =
@@ -47,7 +50,14 @@ const initialState =
         showMessage: false,
         edit: false,
         user: undefined
+    },
+    forum:
+    {
+        threads: [],
+        posts: [],
+        fetching: true
     }
+
 };
 
 function store(state = initialState, action) {
@@ -77,6 +87,11 @@ function store(state = initialState, action) {
         case ADD_USER_KO:
         case CREATE_USER:
             return { ...state, user: user(state, action) };
+        case FETCH_FORUM_THREADS_IN_PROGRESS:
+        case FETCH_FORUM_THREADS_OK:
+        case FETCH_FORUM_THREAD_POSTS_IN_PROGRESS:
+        case FETCH_FORUM_THREAD_POSTS_OK:
+            return {...state, forum: forum(state, action)};
         default:
             return state;
     }
@@ -173,6 +188,21 @@ function user(state, action) {
             return { ...state.user, isFetching: false, message: action.data, showMessage: true };
         case CREATE_USER:
             return { user: { name: '', password: '', id: ''}, isFetching: false, edit: false, showMessage: false, id:'' };
+        default:
+            return state;
+    }
+}
+
+function forum(state, action) {
+    switch (action.type) {
+        case FETCH_FORUM_THREADS_IN_PROGRESS:
+            return { threads: [], posts: [], fetching: true };
+        case FETCH_FORUM_THREADS_OK:
+            return { posts: [], threads: action.data, fetching: false };
+        case FETCH_FORUM_THREAD_POSTS_IN_PROGRESS:
+            return { threads: [], posts: [], fetching: true };
+        case FETCH_FORUM_THREAD_POSTS_OK:
+            return { posts: action.data, threads: [], fetching: false };
         default:
             return state;
     }

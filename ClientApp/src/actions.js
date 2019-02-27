@@ -22,11 +22,17 @@ export const ADD_USER_REQUEST = 'ADD_USER_REQUEST';
 export const ADD_USER_OK = 'ADD_USER_OK';
 export const ADD_USER_KO = 'ADD_USER_KO';
 export const CREATE_USER = 'CREATE_USER';
-const USER_LOCAL_STORAGE = 'user';
+export const FETCH_FORUM_THREADS_IN_PROGRESS = 'FETCH_FORUM_THREADS_IN_PROGRESS';
+export const FETCH_FORUM_THREADS_OK = 'FETCH_FORUM_THREADS_OK';
+export const FETCH_FORUM_THREAD_POSTS_IN_PROGRESS = 'FETCH_FORUM_THREAD_POSTS_IN_PROGRESS';
+export const FETCH_FORUM_THREAD_POSTS_OK = 'FETCH_FORUM_THREAD_POSTS_OK';
 
+const USER_LOCAL_STORAGE = 'user';
 const USERS_ENDPOINT = '/api/users';
 const USER_ENDPOINT = '/api/user';
 const LOGIN_ENDPOINT = '/api/login';
+const FORUM_THREADS_ENDPOINT = '/api/forumThread';
+const FORUM_THREAD_POSTS_ENDPOINT = '/api/ForumThreadPost';
 
 export function loginRequest(data) {
     return {
@@ -171,6 +177,32 @@ export function createUser() {
     };
 }
 
+export function fetchForumThreadsInProgress() {
+    return {
+        type: FETCH_FORUM_THREADS_IN_PROGRESS
+    };
+}
+
+export function fetchForumThreadsOk(data) {
+    return {
+        type: FETCH_FORUM_THREADS_OK,
+        data
+    };
+}
+
+export function fetchForumThreadPostsInProgress() {
+    return {
+        type: FETCH_FORUM_THREADS_IN_PROGRESS
+    };
+}
+
+export function fetchForumThreadPostsOk(data) {
+    return {
+        type: FETCH_FORUM_THREAD_POSTS_OK,
+        data
+    };
+}
+
 export function loadUsersList() {
     return dispatch => {
         dispatch(usersListRequested());
@@ -178,8 +210,10 @@ export function loadUsersList() {
             .then((response) => {
                 dispatch(usersListReceived(response.data));
             })
-            .catch(() => {
-                dispatch(wrongAuthToken());
+            .catch((error) => {
+                if (error.response.status === 401) {
+                    dispatch(wrongAuthToken());
+                }
             });
     };
 }
@@ -284,6 +318,36 @@ export function addUser(data) {
                 }
                 else {
                     dispatch(addUserKo(error.response.data));
+                }
+            });
+    };
+}
+
+export function fetchForumThreads() {
+    return dispatch => {
+        dispatch(fetchForumThreadsInProgress());
+        return axios.get(FORUM_THREADS_ENDPOINT, { headers: authHeader() })
+            .then((response) => {
+                dispatch(fetchForumThreadsOk(response.data));
+            })
+            .catch((error) => {
+                if (error.response.status === 401) {
+                    dispatch(wrongAuthToken());
+                }
+            });
+    };
+}
+
+export function fetchForumThreadPosts(threadId) {
+    return dispatch => {
+        dispatch(fetchForumThreadPostsInProgress());
+        return axios.get(FORUM_THREAD_POSTS_ENDPOINT, { headers: authHeader(), params: { threadId } })
+            .then((response) => {
+                dispatch(fetchForumThreadPostsOk(response.data));
+            })
+            .catch((error) => {
+                if (error.response.status === 401) {
+                    dispatch(wrongAuthToken());
                 }
             });
     };

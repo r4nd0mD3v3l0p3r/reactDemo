@@ -41,7 +41,7 @@ namespace reactDemo.Controllers
 
         IEnumerable<UserModel> AllUsers()
         {
-            return userRepository.GetAllUsers().Select(x => new UserModel { Id = x.Id.ToString(), Name = x.Name });
+            return userRepository.GetAllUsers().Select(x => new UserModel { Id = x.Id, Name = x.Name });
         }
     }
 }

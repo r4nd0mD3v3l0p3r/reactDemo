@@ -19,7 +19,7 @@ namespace reactDemo.Core.Repositories
 
         public async Task<User> GetUserByIdAsync(string id)
         {
-            return (await GetCollection().FindAsync(x => x.Id == new ObjectId(id))).FirstOrDefault();
+            return (await GetCollection().FindAsync(x => x.Id == id)).FirstOrDefault();
         }
 
         public async Task<User> GetUserByNameAsync(string name)
@@ -43,7 +43,7 @@ namespace reactDemo.Core.Repositories
 
         public async Task DeleteUserAsync(string id)
         {
-            await GetCollection().DeleteOneAsync(x => x.Id == new ObjectId(id));
+            await GetCollection().DeleteOneAsync(x => x.Id == id);
         }
 
         public IEnumerable<User> GetAllUsers()
@@ -53,7 +53,7 @@ namespace reactDemo.Core.Repositories
 
         public async Task<bool> ChangeUserPasswordAsync(string id, string password)
         {
-            var result = await GetCollection().UpdateOneAsync(x => x.Id == new ObjectId(id), Builders<User>.Update.Set(x => x.Password, password));
+            var result = await GetCollection().UpdateOneAsync(x => x.Id == id, Builders<User>.Update.Set(x => x.Password, password));
 
             return result.IsAcknowledged && result.MatchedCount > 0;
         }

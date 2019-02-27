@@ -1,10 +1,9 @@
 ﻿using Mongo2Go;
 using MongoDB.Driver;
 using reactDemo.Core.Services.Mongo.Collections;
+using reactDemo.Core.Services.Mongo.Collections.Forum;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace reactDemo.Core.Services.Mongo
 {
@@ -12,6 +11,8 @@ namespace reactDemo.Core.Services.Mongo
     {
         public const string DBName = "reactDemo";
         public const string UsersCollection = "users";
+        public const string ForumThread = "forumThreads";
+        public const string ForumThreadPost = "forumThreadPosts";
         readonly MongoDbRunner _runner;
         readonly MongoClient _client;
 
@@ -22,6 +23,7 @@ namespace reactDemo.Core.Services.Mongo
             _client = new MongoClient(_runner.ConnectionString);
 
             CreateUsersCollection();
+            CreateDefaultThreads();
         }
 
         public void Dispose()
@@ -47,6 +49,24 @@ namespace reactDemo.Core.Services.Mongo
             };
 
             GetDatabase().GetCollection<User>(UsersCollection).InsertMany(users);
+        }
+
+        void CreateDefaultThreads()
+        {
+            var welcomeThread = new ForumThread { Title = "Welcome!", Author = "admin", CreationDate = DateTime.UtcNow };
+            GetDatabase().GetCollection<ForumThread>(ForumThread).InsertOne(welcomeThread);
+
+            var welcomePost = new ForumThreadPost { ThreadId = welcomeThread.Id, Author = "admin", CreationDate = DateTime.UtcNow, Text = "Welcome all to our forum!" };
+            GetDatabase().GetCollection<ForumThreadPost>(ForumThreadPost).InsertOne(welcomePost);
+
+            var presentationThread = new ForumThread { Title = "Present yourself to our community", Author = "admin", CreationDate = DateTime.UtcNow.AddMinutes(10) };
+            GetDatabase().GetCollection<ForumThread>(ForumThread).InsertOne(presentationThread);
+
+            var presentationPost = new ForumThreadPost { ThreadId = presentationThread.Id,
+                                             Author = "admin",
+                                             CreationDate = DateTime.UtcNow.AddMinutes(9),
+                                             Text = "Hi, if you are new to the forum, please introduce yourself here." };
+            GetDatabase().GetCollection<ForumThreadPost>(ForumThreadPost).InsertOne(presentationPost);
         }
     }
 }

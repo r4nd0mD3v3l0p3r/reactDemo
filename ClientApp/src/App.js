@@ -8,6 +8,8 @@ import Login from './components/Login';
 import Users from './components/Users';
 import User from './components/User';
 import history from './components/History';
+import ForumThreads from './components/ForumThreads';
+import ForumThreadPosts from './components/ForumThreadPosts';
 import { PrivateRoute } from './components/PrivateRoute';
 
 const store = configureStore();
@@ -25,6 +27,8 @@ export default class App extends Component {
                         <PrivateRoute exact path='/users' component={Users} />
                         <PrivateRoute exact path='/user/:id' component={User} />
                         <PrivateRoute exact path='/user' component={User} />
+                        <PrivateRoute exact path='/forum' component={ForumThreads} />
+                        <PrivateRoute exact path='/forum/thread/:id' component={ForumThreadPosts} />
                     </Switch>
                 </Router>
             </Provider>

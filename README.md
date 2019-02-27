@@ -6,6 +6,8 @@ Frontend:
 React
 Redux
 MaterialUI
+Json Web Token to handle user authentication
+Moment.js to handle dates
 
 Backend:
 ASP.NET CORE C# Web API

@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using reactDemo.Controllers;
 using reactDemo.Core.Repositories;
+using reactDemo.Core.Repositories.Forum;
 using reactDemo.Core.Services.Mongo;
 using System.Text;
 
@@ -35,6 +36,8 @@ namespace reactDemo
 
             services.AddSingleton<IDBInitializer>(new DBInitializer());
             services.AddSingleton<IUsersRepository, UserRepository>();
+            services.AddSingleton<IForumThreadRepository, ForumThreadRepository>();
+            services.AddSingleton<IForumThreadPostRepository, ForumThreadPostRepository>();
 
             SetupJWT(services);
         }

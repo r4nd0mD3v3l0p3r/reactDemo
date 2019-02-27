@@ -23,7 +23,7 @@ namespace reactDemo.Controllers
 
             return Ok(new UserModel
             {
-                Id = user.Id.ToString(),
+                Id = user.Id,
                 Name = user.Name
             });
         }
