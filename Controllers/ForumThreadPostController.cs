@@ -33,5 +33,22 @@ namespace reactDemo.Controllers
                                Text = x.Text
                            }));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddPost([FromBody] ForumThreadPostModel thread)
+        {
+            await forumThreadPostRepository.CreatePostAsync(thread.Text, thread.Author, thread.ThreadId);
+
+            var posts = await forumThreadPostRepository.PostsOrderedByDateAsync(thread.ThreadId);
+
+            return Ok(posts.ToEnumerable()
+                           .Select(x => new ForumThreadPostModel
+                           {
+                               Id = x.Id,
+                               Author = x.Author,
+                               CreationDate = x.CreationDate,
+                               Text = x.Text
+                           }));
+        }
     }
 }

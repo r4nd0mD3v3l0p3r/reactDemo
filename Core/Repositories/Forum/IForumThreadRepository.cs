@@ -7,5 +7,6 @@ namespace reactDemo.Core.Repositories
     public interface IForumThreadRepository
     {
         Task<IAsyncCursor<ForumThread>> ThreadsOrderedByDateAsync();
+        Task CreateThreadAsync(string title, string author);
     }
 }

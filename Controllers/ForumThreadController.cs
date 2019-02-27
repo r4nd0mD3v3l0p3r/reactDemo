@@ -23,15 +23,32 @@ namespace reactDemo.Controllers
         public async Task<IActionResult> ThreadsOrderedByDate()
         {
             var threads = await forumThreadRepository.ThreadsOrderedByDateAsync();
-         
+
             return Ok(threads.ToEnumerable()
                              .Select(x => new ForumThreadModel
-                                {
+                             {
                                  Id = x.Id,
                                  Author = x.Author,
                                  CreationDate = x.CreationDate,
                                  Title = x.Title
-                                }));
+                             }));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddThread([FromBody] ForumThreadModel thread)
+        {
+            await forumThreadRepository.CreateThreadAsync(thread.Title, thread.Author);
+
+            var threads = await forumThreadRepository.ThreadsOrderedByDateAsync();
+
+            return Ok(threads.ToEnumerable()
+                             .Select(x => new ForumThreadModel
+                             {
+                                 Id = x.Id,
+                                 Author = x.Author,
+                                 CreationDate = x.CreationDate,
+                                 Title = x.Title
+                             }));
         }
     }
 }

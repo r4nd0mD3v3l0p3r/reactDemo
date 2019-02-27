@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import MenuAppBar from './MenuAppBar';
 import PropTypes from "prop-types";
-import { fetchForumThreads } from '../actions';
+import { fetchForumThreads, createForumThread } from '../actions';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -16,6 +16,12 @@ import Button from "@material-ui/core/Button";
 import EditIcon from "@material-ui/icons/Edit";
 import { Link } from "react-router-dom";
 import Moment from 'react-moment';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const styles = theme => ({
     button: {
@@ -37,7 +43,8 @@ class ForumThreads extends React.PureComponent {
         super(props);
 
         this.state = {
-            message: ''
+            newThreadTitle: '',
+            dialogOpen: false
         };
     }
 
@@ -46,15 +53,36 @@ class ForumThreads extends React.PureComponent {
         dispatch(fetchForumThreads());
     }
 
+    handleChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value });
+    }
+
+    showDialog = () => {
+        this.setState({ dialogOpen: true, newThreadTitle: '' });
+    }
+
+    handleClose = () => {
+        this.setState({ dialogOpen: false });
+    }
+
+    handleCreate = () => {
+        const { dispatch, name } = this.props;
+        const { newThreadTitle } = this.state;
+
+        dispatch(createForumThread(newThreadTitle, name));
+
+        this.setState({ dialogOpen: false });
+    }
+
     render() {
-        const { message } = this.state;
-        const { threads, isFetching, classes } = this.props;
+        const { dialogOpen, newThreadTitle } = this.state;
+        const { threads, isFetching, classes, message } = this.props;
 
         return (
             <React.Fragment>
                 <MenuAppBar>
                     <BlockUi tag="div" blocking={isFetching}>
-                        <Button variant="contained" className={classes.button} component={Link} to={'/user'}>
+                        <Button variant="contained" className={classes.button} onClick={this.showDialog}>
                             New thread
                             <EditIcon className={classes.rightIcon} />
                         </Button>
@@ -108,6 +136,37 @@ class ForumThreads extends React.PureComponent {
                     action={[
                     ]}
                 />
+                <Dialog
+                    open={dialogOpen}
+                    onClose={this.handleClose}
+                    aria-labelledby="form-dialog-title"
+                >
+                    <DialogTitle id="form-dialog-title">Create new forum thread</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Enter the name of the new thread
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="newThreadTitle"
+                            name="newThreadTitle"
+                            label="Thread Title"
+                            type="text"
+                            value={newThreadTitle}
+                            onChange={this.handleChange}
+                            fullWidth
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.handleCreate} color="primary">
+                            Create
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </React.Fragment>
         );
     }
@@ -115,9 +174,10 @@ class ForumThreads extends React.PureComponent {
 
 function mapStateToProps(state) {
     const { store } = state;
-    const { threads, isFetching } = store.forum;
+    const { threads, isFetching, message } = store.forum;
+    const { name } = store.login;
 
-    return { threads, isFetching };
+    return { threads, isFetching, name, message };
 }
 
 ForumThreads.propTypes = {

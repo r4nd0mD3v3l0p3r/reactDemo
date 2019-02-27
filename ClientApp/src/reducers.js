@@ -25,7 +25,11 @@ import {
     FETCH_FORUM_THREADS_IN_PROGRESS,
     FETCH_FORUM_THREADS_OK,
     FETCH_FORUM_THREAD_POSTS_IN_PROGRESS,
-    FETCH_FORUM_THREAD_POSTS_OK
+    FETCH_FORUM_THREAD_POSTS_OK,
+    CREATE_FORUM_THREAD_IN_PROGRESS,
+    CREATE_FORUM_THREAD_OK,
+    CREATE_FORUM_THREAD_POST_IN_PROGRESS,
+    CREATE_FORUM_THREAD_POST_OK
 } from './actions';
 
 const initialState =
@@ -35,7 +39,8 @@ const initialState =
         didInvalidate: false,
         logged: false,
         invalidCredentials: false,
-        wrongAuthToken: false
+        wrongAuthToken: false,
+        name: ''
     },
     users: {
         isFetching: false,
@@ -55,7 +60,8 @@ const initialState =
     {
         threads: [],
         posts: [],
-        fetching: true
+        fetching: true,
+        message: ''
     }
 
 };
@@ -91,6 +97,10 @@ function store(state = initialState, action) {
         case FETCH_FORUM_THREADS_OK:
         case FETCH_FORUM_THREAD_POSTS_IN_PROGRESS:
         case FETCH_FORUM_THREAD_POSTS_OK:
+        case CREATE_FORUM_THREAD_IN_PROGRESS:
+        case CREATE_FORUM_THREAD_OK:
+        case CREATE_FORUM_THREAD_POST_IN_PROGRESS:
+        case CREATE_FORUM_THREAD_POST_OK:
             return {...state, forum: forum(state, action)};
         default:
             return state;
@@ -105,14 +115,16 @@ function login(state, action) {
                 didInvalidate: true,
                 logged: true,
                 invalidCredentials: false,
-                wrongAuthToken: false
+                wrongAuthToken: false,
+                name: action.name
             };
         case LOGIN_REQUEST:
             return {
                 isFetching: false,
                 didInvalidate: false,
                 invalidCredentials: false,
-                wrongAuthToken: false
+                wrongAuthToken: false,
+                name: ''
             };
         case LOGIN_KO:
             return {
@@ -120,7 +132,8 @@ function login(state, action) {
                 didInvalidate: false,
                 logged: false,
                 invalidCredentials: true,
-                wrongAuthToken: false
+                wrongAuthToken: false,
+                name: ''
             };
         case LOGOUT_REQUEST:
             return {
@@ -128,7 +141,8 @@ function login(state, action) {
                 didInvalidate: false,
                 logged: false,
                 invalidCredentials: false,
-                wrongAuthToken: false
+                wrongAuthToken: false,
+                name: ''
             };
         case WRONG_AUTH_TOKEN:
             return {
@@ -136,7 +150,8 @@ function login(state, action) {
                 didInvalidate: false,
                 logged: false,
                 invalidCredentials: false,
-                wrongAuthToken: true
+                wrongAuthToken: true,
+                name: ''
             };
         default:
             return state;
@@ -196,13 +211,21 @@ function user(state, action) {
 function forum(state, action) {
     switch (action.type) {
         case FETCH_FORUM_THREADS_IN_PROGRESS:
-            return { threads: [], posts: [], fetching: true };
+            return { threads: [], posts: [], fetching: true, message: '' };
         case FETCH_FORUM_THREADS_OK:
-            return { posts: [], threads: action.data, fetching: false };
+            return { posts: [], threads: action.data, fetching: false, message: '' };
         case FETCH_FORUM_THREAD_POSTS_IN_PROGRESS:
-            return { threads: [], posts: [], fetching: true };
+            return { threads: [], posts: [], fetching: true, message: '' };
         case FETCH_FORUM_THREAD_POSTS_OK:
-            return { posts: action.data, threads: [], fetching: false };
+            return { posts: action.data, threads: [], fetching: false, message: '' };
+        case CREATE_FORUM_THREAD_IN_PROGRESS:
+            return { posts: [], threads: [], fetching: true, message:'' };
+        case CREATE_FORUM_THREAD_OK:
+            return { posts: [], threads: action.data, fetching: false, message: 'New Thread successfully created' };
+        case CREATE_FORUM_THREAD_POST_IN_PROGRESS:
+            return { posts: [], threads: [], fetching: true, message: '' };
+        case CREATE_FORUM_THREAD_POST_OK:
+            return { posts: action.data, threads: [], fetching: false, message: 'New Post successfully created' };
         default:
             return state;
     }

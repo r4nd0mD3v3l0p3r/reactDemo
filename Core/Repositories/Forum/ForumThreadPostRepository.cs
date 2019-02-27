@@ -25,6 +25,12 @@ namespace reactDemo.Core.Repositories.Forum
             return await GetCollection().FindAsync(x => x.ThreadId == threadId, options);
         }
 
+        public async Task CreatePostAsync(string text, string author, string threadId)
+        {
+            await GetCollection().InsertOneAsync(new ForumThreadPost { Author = author, Text = text, ThreadId = threadId, CreationDate = DateTimeOffset.UtcNow });
+        }
+
+
         IMongoCollection<ForumThreadPost> GetCollection()
         {
             return dbInitializer.GetDatabase().GetCollection<ForumThreadPost>(DBInitializer.ForumThreadPost);

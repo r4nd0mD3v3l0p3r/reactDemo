@@ -26,6 +26,12 @@ export const FETCH_FORUM_THREADS_IN_PROGRESS = 'FETCH_FORUM_THREADS_IN_PROGRESS'
 export const FETCH_FORUM_THREADS_OK = 'FETCH_FORUM_THREADS_OK';
 export const FETCH_FORUM_THREAD_POSTS_IN_PROGRESS = 'FETCH_FORUM_THREAD_POSTS_IN_PROGRESS';
 export const FETCH_FORUM_THREAD_POSTS_OK = 'FETCH_FORUM_THREAD_POSTS_OK';
+export const CREATE_FORUM_THREAD_IN_PROGRESS = 'CREATE_THREAD_IN_PROGRESS';
+export const CREATE_FORUM_THREAD_OK = 'CREATE_THREAD_OK';
+
+export const CREATE_FORUM_THREAD_POST_IN_PROGRESS = 'CREATE_FORUM_THREAD_POST_IN_PROGRESS';
+export const CREATE_FORUM_THREAD_POST_OK = 'CREATE_FORUM_THREAD_POST_OK';
+
 
 const USER_LOCAL_STORAGE = 'user';
 const USERS_ENDPOINT = '/api/users';
@@ -41,9 +47,10 @@ export function loginRequest(data) {
     };
 }
 
-export function loginOk() {
+export function loginOk(name) {
     return {
-        type: LOGIN_OK
+        type: LOGIN_OK,
+        name
     };
 }
 
@@ -203,6 +210,32 @@ export function fetchForumThreadPostsOk(data) {
     };
 }
 
+export function createForumThreadInProgress() {
+    return {
+        type: CREATE_FORUM_THREAD_IN_PROGRESS
+    };
+}
+
+export function createForumThreadOk(data) {
+    return {
+        type: CREATE_FORUM_THREAD_OK,
+        data
+    };
+}
+
+export function createForumThreadPostInProgress() {
+    return {
+        type: CREATE_FORUM_THREAD_POST_IN_PROGRESS
+    };
+}
+
+export function createForumThreadPostOk(data) {
+    return {
+        type: CREATE_FORUM_THREAD_POST_OK,
+        data
+    };
+}
+
 export function loadUsersList() {
     return dispatch => {
         dispatch(usersListRequested());
@@ -226,7 +259,7 @@ export function login(data) {
             .then(function (response) {
                 if (response.status === 200) {
                     localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify(response.data));
-                    dispatch(loginOk());
+                    dispatch(loginOk(data.name));
                 }
                 else {
                     dispatch(loginKo());
@@ -344,6 +377,36 @@ export function fetchForumThreadPosts(threadId) {
         return axios.get(FORUM_THREAD_POSTS_ENDPOINT, { headers: authHeader(), params: { threadId } })
             .then((response) => {
                 dispatch(fetchForumThreadPostsOk(response.data));
+            })
+            .catch((error) => {
+                if (error.response.status === 401) {
+                    dispatch(wrongAuthToken());
+                }
+            });
+    };
+}
+
+export function createForumThread(title, author) {
+    return dispatch => {
+        dispatch(createForumThreadInProgress());
+        return axios.post(FORUM_THREADS_ENDPOINT, { title: title, author: author }, { headers: authHeader() })
+            .then((response) => {
+                dispatch(createForumThreadOk(response.data));
+            })
+            .catch((error) => {
+                if (error.response.status === 401) {
+                    dispatch(wrongAuthToken());
+                }
+            });
+    };
+}
+
+export function createForumThreadPost(text, author, threadId) {
+    return dispatch => {
+        dispatch(createForumThreadPostInProgress());
+        return axios.post(FORUM_THREAD_POSTS_ENDPOINT, { text: text, author: author, threadId: threadId }, { headers: authHeader() })
+            .then((response) => {
+                dispatch(createForumThreadPostOk(response.data));
             })
             .catch((error) => {
                 if (error.response.status === 401) {

@@ -7,9 +7,9 @@ namespace reactDemo.ViewModels
 {
     public class ForumThreadModel
     {
-        public string Author { get; internal set; }
-        public DateTimeOffset CreationDate { get; internal set; }
-        public string Title { get; internal set; }
-        public string Id { get; internal set; }
+        public string Author { get; set; }
+        public DateTimeOffset CreationDate { get; set; }
+        public string Title { get; set; }
+        public string Id { get; set; }
     }
 }
