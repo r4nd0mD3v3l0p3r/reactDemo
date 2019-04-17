@@ -1,5 +1,7 @@
 ﻿import axios from 'axios';
-import { authHeader } from './helpers/authHeader';
+import { Cookies } from 'react-cookie';
+export const LOGIN_COOKIE = 'reactDemoLogin';
+
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_OK = 'LOGIN_OK';
 export const LOGIN_KO = 'LOGIN_KO';
@@ -32,8 +34,6 @@ export const CREATE_FORUM_THREAD_OK = 'CREATE_THREAD_OK';
 export const CREATE_FORUM_THREAD_POST_IN_PROGRESS = 'CREATE_FORUM_THREAD_POST_IN_PROGRESS';
 export const CREATE_FORUM_THREAD_POST_OK = 'CREATE_FORUM_THREAD_POST_OK';
 
-
-const USER_LOCAL_STORAGE = 'user';
 const USERS_ENDPOINT = '/api/users';
 const USER_ENDPOINT = '/api/user';
 const LOGIN_ENDPOINT = '/api/login';
@@ -258,7 +258,9 @@ export function login(data) {
         return axios.post(LOGIN_ENDPOINT, { name: data.name, password: data.password }, { headers: authHeader() })
             .then(function (response) {
                 if (response.status === 200) {
-                    localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify(response.data));
+                    const cookies = new Cookies();
+                    cookies.set(LOGIN_COOKIE, JSON.stringify(response.data), { path: '/' });
+
                     dispatch(loginOk(data.name));
                 }
                 else {
@@ -414,4 +416,16 @@ export function createForumThreadPost(text, author, threadId) {
                 }
             });
     };
+}
+
+function authHeader() {
+    const cookies = new Cookies();
+    const cookie = cookies.get(LOGIN_COOKIE);
+
+    if (cookie && cookie.token) {
+        return { 'Authorization': 'Bearer ' + cookie.token };
+    }
+    else {
+        return {};
+    }
 }

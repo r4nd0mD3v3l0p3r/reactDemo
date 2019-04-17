@@ -1,9 +1,15 @@
 ﻿import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { LOGIN_COOKIE } from '../actions';
 
-export const PrivateRoute = ({ component: Component, ...rest }) =>
-    (<Route {...rest} render={props => (
-        localStorage.getItem('user')
+import { Route, Redirect } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+
+export function PrivateRoute({ component: Component, ...rest }) {
+    const [cookies, _] = useCookies([LOGIN_COOKIE]);
+
+    return (<Route {...rest} render={props =>
+        cookies.reactDemoLogin
             ? <Component {...props} />
-            : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
-    )} />)
+            : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />}
+            />);
+}

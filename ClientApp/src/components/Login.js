@@ -6,9 +6,10 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { login } from '../actions';
+import { login, LOGIN_COOKIE } from '../actions';
 import MenuAppBar from './MenuAppBar';
-
+import compose from 'recompose/compose';
+import { withCookies } from 'react-cookie';
 
 const classes = theme => ({
     container: {
@@ -76,9 +77,11 @@ class Login extends Component {
     }
 
     render() {
-        const { logged, invalidCredentials } = this.props;
+        const { invalidCredentials, cookies } = this.props;
         const { name, password } = this.state;
         let content;
+        const loginCookie = cookies.get(LOGIN_COOKIE);
+        const logged = loginCookie !== undefined;
         if (!logged) {
             content = (
                 <Grid
@@ -126,7 +129,7 @@ class Login extends Component {
                     alignItems="center"
                 >
                     <Typography component="h3" variant="h3">
-                        Welcome back
+                        Welcome back {loginCookie.name}
                     </Typography>
                 </Grid>
             );
@@ -147,15 +150,14 @@ Login.propTypes = {
 
 function mapStateToProps(state) {
     const { store } = state;
-    const { isFetching, logged, invalidCredentials } = store.login || {
+    const { isFetching, invalidCredentials } = store.login || {
         isFetching: false,
-        logged: false,
         invalidCredentials: false
     };
 
     return {
-        logged, isFetching, invalidCredentials
+        isFetching, invalidCredentials
     };
 }
 
-export default connect(mapStateToProps)(withStyles(classes)(Login));
+export default compose(withStyles(classes, { name: 'Login' }), withCookies, connect(mapStateToProps,null))(Login);

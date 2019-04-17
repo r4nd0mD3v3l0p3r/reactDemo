@@ -1,5 +1,8 @@
 ﻿import { combineReducers } from 'redux';
+import { Cookies } from 'react-cookie';
+
 import {
+    LOGIN_COOKIE,
     LOGIN_REQUEST,
     LOGIN_OK,
     LOGIN_KO,
@@ -37,7 +40,6 @@ const initialState =
     login: {
         isFetching: false,
         didInvalidate: false,
-        logged: false,
         invalidCredentials: false,
         wrongAuthToken: false,
         name: ''
@@ -114,14 +116,12 @@ function login(state, action) {
             return {
                 isFetching: false,
                 didInvalidate: true,
-                logged: true,
                 invalidCredentials: false,
-                wrongAuthToken: false,
-                name: action.name
+                wrongAuthToken: false
             };
         case LOGIN_REQUEST:
             return {
-                isFetching: false,
+                isFetching: true,
                 didInvalidate: false,
                 invalidCredentials: false,
                 wrongAuthToken: false,
@@ -131,16 +131,17 @@ function login(state, action) {
             return {
                 isFetching: false,
                 didInvalidate: false,
-                logged: false,
                 invalidCredentials: true,
                 wrongAuthToken: false,
                 name: ''
             };
         case LOGOUT_REQUEST:
+            const cookies = new Cookies();
+            cookies.remove(LOGIN_COOKIE, { path: '/' });
+
             return {
                 isFetching: false,
                 didInvalidate: false,
-                logged: false,
                 invalidCredentials: false,
                 wrongAuthToken: false,
                 name: ''
@@ -149,7 +150,6 @@ function login(state, action) {
             return {
                 isFetching: false,
                 didInvalidate: false,
-                logged: false,
                 invalidCredentials: false,
                 wrongAuthToken: true,
                 name: ''

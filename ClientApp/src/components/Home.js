@@ -1,14 +1,19 @@
 ﻿import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
 import MenuAppBar from './MenuAppBar';
+import { withCookies } from 'react-cookie';
+import { LOGIN_COOKIE } from '../actions';
+import compose from 'recompose/compose';
+
 const styles = theme => ({
 });
 
 class Home extends React.Component {
     render() {
-        const { logged } = this.props;
+        const { cookies } = this.props;
+        const logged = cookies.get(LOGIN_COOKIE) !== undefined;
+
         let content;
 
         if (logged) {
@@ -26,16 +31,7 @@ class Home extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    const { store } = state;
-    const { logged } = store.login || { logged: false };
-
-    return { logged };
-}
-
 Home.propTypes = {
-    classes: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired
+    classes: PropTypes.object.isRequired
 };
-
-export default connect(mapStateToProps)(withStyles(styles)(Home));
+export default compose(withStyles(styles, { name: 'Home' }), withCookies)(Home);

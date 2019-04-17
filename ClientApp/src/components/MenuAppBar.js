@@ -22,6 +22,9 @@ import Button from "@material-ui/core/Button";
 import { logoutRequest } from '../actions';
 import history from './History';
 import { Helmet } from "react-helmet";
+import compose from 'recompose/compose';
+import { LOGIN_COOKIE } from '../actions';
+import { withCookies } from 'react-cookie';
 
 const drawerWidth = 240;
 
@@ -104,8 +107,10 @@ class MenuAppBar extends React.Component {
     };
 
     render() {
-        const { classes, logged, title } = this.props;
+        const { classes, title, cookies } = this.props;
         let button;
+        const logged = cookies.get(LOGIN_COOKIE) !== undefined;
+
         if (logged) {
             button = (
                 <Button color="inherit" onClick={this.handleLogout}>Logout</Button>
@@ -188,9 +193,9 @@ class MenuAppBar extends React.Component {
 
 function mapStateToProps(state) {
     const { store } = state;
-    const { logged, wrongAuthToken } = store.login || { logged: false, wrongAuthToken: false };
+    const { wrongAuthToken } = store.login || { wrongAuthToken: false };
 
-    return { logged, wrongAuthToken };
+    return { wrongAuthToken };
 }
 
 MenuAppBar.propTypes = {
@@ -203,4 +208,4 @@ MenuAppBar.defaultProps = {
     title: 'ReactDemo'
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(MenuAppBar));
+export default compose(withStyles(styles, { name: 'Login' }), withCookies, connect(mapStateToProps, null))(MenuAppBar);
