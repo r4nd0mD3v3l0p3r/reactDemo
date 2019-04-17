@@ -79,11 +79,10 @@ class ForumThreadPosts extends React.PureComponent {
 
     render() {
         const { message, dialogOpen, newPostText } = this.state;
-        const { posts, isFetching, classes } = this.props;
-        const threadTitle = posts.length > 0 ? ` Forum Thread: ${posts[0].threadTitle}` : '';
+        const { threadTitle, posts, isFetching, classes } = this.props;
         return (
             <React.Fragment>
-                <MenuAppBar title={threadTitle}>
+                <MenuAppBar title={` Forum Thread: ${threadTitle}`}>
                     <BlockUi tag="div" blocking={isFetching}>
                         <Button variant="contained" className={classes.button} onClick={this.showDialog}>
                             New post
@@ -162,10 +161,10 @@ class ForumThreadPosts extends React.PureComponent {
 
 function mapStateToProps(state) {
     const { store } = state;
-    const { posts, isFetching, message } = store.forum;
+    const { threadTitle, posts, isFetching, message } = store.forum;
     const { name } = store.login;
 
-    return { posts, isFetching, message, name };
+    return { threadTitle, posts, isFetching, message, name };
 }
 
 ForumThreadPosts.propTypes = {

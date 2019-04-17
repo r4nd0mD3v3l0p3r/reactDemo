@@ -12,6 +12,5 @@ namespace reactDemo.ViewModels
         public DateTimeOffset CreationDate { get; set; }
         public string Text { get; set; }
         public string ThreadId { get; set; }
-        public string ThreadTitle { get; set; }
     }
 }

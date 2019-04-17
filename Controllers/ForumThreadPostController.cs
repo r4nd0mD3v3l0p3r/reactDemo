@@ -28,15 +28,18 @@ namespace reactDemo.Controllers
             var posts = await forumThreadPostRepository.PostsOrderedByDateAsync(threadId);
             var thread = await forumThreadRepository.FindById(threadId);
 
-            return Ok(posts.ToEnumerable()
+            return Ok(new
+            {
+                threadTitle = thread.Title,
+                posts = posts.ToEnumerable()
                            .Select(x => new ForumThreadPostModel
                            {
                                Id = x.Id,
                                Author = x.Author,
                                CreationDate = x.CreationDate,
                                Text = x.Text,
-                               ThreadTitle = thread.Title
-                           }));
+                           })
+            });
         }
 
         [HttpPost]

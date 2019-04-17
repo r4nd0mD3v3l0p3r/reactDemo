@@ -58,6 +58,7 @@ const initialState =
     },
     forum:
     {
+        threadTitle: '',
         threads: [],
         posts: [],
         fetching: true,
@@ -217,7 +218,7 @@ function forum(state, action) {
         case FETCH_FORUM_THREAD_POSTS_IN_PROGRESS:
             return { threads: [], posts: [], fetching: true, message: '' };
         case FETCH_FORUM_THREAD_POSTS_OK:
-            return { posts: action.data, threads: [], fetching: false, message: '' };
+            return { threadTitle: action.data.threadTitle, posts: action.data.posts, threads: [], fetching: false, message: '' };
         case CREATE_FORUM_THREAD_IN_PROGRESS:
             return { posts: [], threads: [], fetching: true, message:'' };
         case CREATE_FORUM_THREAD_OK:
