@@ -87,7 +87,7 @@ class Users extends React.PureComponent {
 
         return (
             <React.Fragment>
-                <MenuAppBar>
+                <MenuAppBar title="Users Page">
                     <BlockUi tag="div" blocking={isFetching}>
                         <Button variant="contained" className={classes.button} component={Link} to={'/user'}>
                             Create new user

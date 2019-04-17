@@ -27,6 +27,11 @@ namespace reactDemo.Core.Repositories
             await GetCollection().InsertOneAsync(new ForumThread { Title = title, Author = author, CreationDate = DateTimeOffset.UtcNow });
         }
 
+        public async Task<ForumThread> FindById(string id)
+        {
+            return (await GetCollection().FindAsync(x => x.Id == id)).FirstOrDefault();
+        }
+
         IMongoCollection<ForumThread> GetCollection()
         {
             return dbInitializer.GetDatabase().GetCollection<ForumThread>(DBInitializer.ForumThread);

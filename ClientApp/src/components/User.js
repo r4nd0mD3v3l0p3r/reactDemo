@@ -169,7 +169,7 @@ class User extends React.Component {
 
         return (
             <React.Fragment>
-                <MenuAppBar>
+                <MenuAppBar title={edit === true ? "Edit User" : "Create User"}>
                     <BlockUi tag="div" blocking={isFetching}>
                         {content}
                     </BlockUi>

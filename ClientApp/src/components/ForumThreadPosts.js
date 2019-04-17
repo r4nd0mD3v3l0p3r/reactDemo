@@ -13,7 +13,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import Button from "@material-ui/core/Button";
 import EditIcon from "@material-ui/icons/Edit";
-import { Link } from "react-router-dom";
 import Moment from 'react-moment';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -81,10 +80,10 @@ class ForumThreadPosts extends React.PureComponent {
     render() {
         const { message, dialogOpen, newPostText } = this.state;
         const { posts, isFetching, classes } = this.props;
-
+        const threadTitle = posts.length > 0 ? ` Forum Thread: ${posts[0].threadTitle}` : '';
         return (
             <React.Fragment>
-                <MenuAppBar>
+                <MenuAppBar title={threadTitle}>
                     <BlockUi tag="div" blocking={isFetching}>
                         <Button variant="contained" className={classes.button} onClick={this.showDialog}>
                             New post

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using reactDemo.Core.Repositories;
 using reactDemo.Core.Repositories.Forum;
 using reactDemo.ViewModels;
 using System.Linq;
@@ -14,15 +15,18 @@ namespace reactDemo.Controllers
     public class ForumThreadPostController : Controller
     {
         readonly IForumThreadPostRepository forumThreadPostRepository;
+        readonly IForumThreadRepository forumThreadRepository;
 
-        public ForumThreadPostController(IForumThreadPostRepository forumThreadPostRepository)
+        public ForumThreadPostController(IForumThreadPostRepository forumThreadPostRepository, IForumThreadRepository forumThreadRepository)
         {
             this.forumThreadPostRepository = forumThreadPostRepository;
+            this.forumThreadRepository = forumThreadRepository;
         }
 
         public async Task<IActionResult> PostsOrderedByDate(string threadId)
         {
             var posts = await forumThreadPostRepository.PostsOrderedByDateAsync(threadId);
+            var thread = await forumThreadRepository.FindById(threadId);
 
             return Ok(posts.ToEnumerable()
                            .Select(x => new ForumThreadPostModel
@@ -30,7 +34,8 @@ namespace reactDemo.Controllers
                                Id = x.Id,
                                Author = x.Author,
                                CreationDate = x.CreationDate,
-                               Text = x.Text
+                               Text = x.Text,
+                               ThreadTitle = thread.Title
                            }));
         }
 

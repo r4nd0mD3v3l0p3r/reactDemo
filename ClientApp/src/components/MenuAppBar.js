@@ -21,6 +21,7 @@ import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { logoutRequest } from '../actions';
 import history from './History';
+import { Helmet } from "react-helmet";
 
 const drawerWidth = 240;
 
@@ -103,7 +104,7 @@ class MenuAppBar extends React.Component {
     };
 
     render() {
-        const { classes, logged } = this.props;
+        const { classes, logged, title } = this.props;
         let button;
         if (logged) {
             button = (
@@ -118,6 +119,9 @@ class MenuAppBar extends React.Component {
 
         return (
             <div className={classes.root}>
+                <Helmet>
+                    <title>{title}</title>
+                </Helmet>
                 <CssBaseline />
                 <AppBar
                     position="fixed"
@@ -135,6 +139,7 @@ class MenuAppBar extends React.Component {
                             <MenuIcon />
                         </IconButton>}
                         <Typography variant="h6" color="inherit" noWrap style={{ flex: 1 }} />
+                        <Typography variant="h6" color="inherit" noWrap style={{ flex: 1 }}>{title}</Typography>
                         {button}
                     </Toolbar>
                 </AppBar>
@@ -190,7 +195,12 @@ function mapStateToProps(state) {
 
 MenuAppBar.propTypes = {
     classes: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
+    title: PropTypes.string
 };
+
+MenuAppBar.defaultProps = {
+    title: 'ReactDemo'
+}
 
 export default connect(mapStateToProps)(withStyles(styles)(MenuAppBar));

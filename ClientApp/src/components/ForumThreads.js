@@ -80,7 +80,7 @@ class ForumThreads extends React.PureComponent {
 
         return (
             <React.Fragment>
-                <MenuAppBar>
+                <MenuAppBar title="Forum Threads">
                     <BlockUi tag="div" blocking={isFetching}>
                         <Button variant="contained" className={classes.button} onClick={this.showDialog}>
                             New thread

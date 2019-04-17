@@ -8,5 +8,6 @@ namespace reactDemo.Core.Repositories
     {
         Task<IAsyncCursor<ForumThread>> ThreadsOrderedByDateAsync();
         Task CreateThreadAsync(string title, string author);
+        Task<ForumThread> FindById(string id);
     }
 }
