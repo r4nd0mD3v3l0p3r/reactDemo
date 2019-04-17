@@ -11,6 +11,7 @@ MaterialUI
 Json Web Token to handle user authentication
 Moment.js to handle dates
 Helmet for head tags
+react-cookie to manage cookies
 
 Backend:
 ASP.NET CORE C# Web API
