@@ -1,9 +1,9 @@
 ﻿import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import MenuAppBar from './MenuAppBar';
+import MenuAppBar from '../MenuAppBar';
 import PropTypes from "prop-types";
-import { fetchForumThreads, createForumThread } from '../actions';
+import { loadUsersList, deleteUser } from '../../actions';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -13,10 +13,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from "@material-ui/core/Button";
+import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import { Link } from "react-router-dom";
-import Moment from 'react-moment';
-import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -38,80 +37,84 @@ const styles = theme => ({
     },
 });
 
-class ForumThreads extends React.PureComponent {
+
+class Users extends React.PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            newThreadTitle: '',
-            dialogOpen: false
+            usersList: [],
+            errorMessage: '',
+            deletionDialogOpen: false,
+            selectedRowId: ''
         };
     }
 
     componentDidMount() {
         const { dispatch } = this.props;
-        dispatch(fetchForumThreads());
+
+        dispatch(loadUsersList(dispatch));
     }
 
-    handleChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value });
+    componentWillReceiveProps(nextProps) {
+        this.setState({ errorMessage: nextProps.errorMessage });
     }
 
-    showDialog = () => {
-        this.setState({ dialogOpen: true, newThreadTitle: '' });
+    handleSnackbarClose = (event, reason) => {
+        this.setState({ errorMessage: '' });
+    };
+
+    delete = row => {
+        this.setState({ selectedRowId: row.id, deletionDialogOpen: true });
+    };
+
+    handleDeletionDialogClose = () => {
+        this.setState({ deletionDialogOpen: false });
     }
 
-    handleClose = () => {
-        this.setState({ dialogOpen: false });
-    }
+    handleDeletionDialogOk = () => {
+        const { dispatch } = this.props;
+        const { selectedRowId } = this.state;
 
-    handleCreate = () => {
-        const { dispatch, name } = this.props;
-        const { newThreadTitle } = this.state;
+        this.handleDeletionDialogClose();
 
-        dispatch(createForumThread(newThreadTitle, name));
-
-        this.setState({ dialogOpen: false });
+        dispatch(deleteUser({ id: selectedRowId }));
     }
 
     render() {
-        const { dialogOpen, newThreadTitle } = this.state;
-        const { threads, isFetching, classes, message } = this.props;
+        const { errorMessage, deletionDialogOpen } = this.state;
+        const { usersList, isFetching, classes } = this.props;
 
         return (
             <React.Fragment>
-                <MenuAppBar title="Forum Threads">
+                <MenuAppBar title="Users Page">
                     <BlockUi tag="div" blocking={isFetching}>
-                        <Button variant="contained" className={classes.button} onClick={this.showDialog}>
-                            New thread
+                        <Button variant="contained" className={classes.button} component={Link} to={'/user'}>
+                            Create new user
                             <EditIcon className={classes.rightIcon} />
                         </Button>
                         <Table className={classes.table}>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Title</TableCell>
-                                    <TableCell>Author</TableCell>
-                                    <TableCell>Creation Date</TableCell>
+                                    <TableCell>User Name</TableCell>
                                     <TableCell align="right">Actions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {threads.map(row => {
+                                {usersList.map(row => {
                                     return (
                                         <TableRow key={row.id}>
                                             <TableCell component="th" scope="row">
-                                                {row.title}
-                                            </TableCell>
-                                            <TableCell component="th" scope="row">
-                                                {row.author}
-                                            </TableCell>
-                                            <TableCell component="th" scope="row">
-                                                <Moment>{row.creationDate}</Moment>
+                                                {row.name}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <Button variant="contained" className={classes.button} component={Link} to={`/forum/thread/${row.id}`}>
-                                                    Open
+                                                <Button variant="contained" className={classes.button} component={Link} to={`/user/${row.id}`}>
+                                                    Edit
                                                     <EditIcon className={classes.rightIcon} />
+                                                </Button>
+                                                <Button variant="contained" className={classes.button} onClick={(() => this.delete(row))}>
+                                                    Delete
+                                                    <DeleteIcon className={classes.rightIcon} />
                                                 </Button>
                                             </TableCell>
                                         </TableRow>
@@ -119,6 +122,7 @@ class ForumThreads extends React.PureComponent {
                                 })}
                             </TableBody>
                         </Table>
+
                     </BlockUi>
                 </MenuAppBar>
                 <Snackbar
@@ -126,44 +130,35 @@ class ForumThreads extends React.PureComponent {
                         vertical: 'bottom',
                         horizontal: 'right',
                     }}
-                    open={!!message}
+                    open={!!errorMessage}
                     autoHideDuration={3000}
                     onClose={this.handleSnackbarClose}
                     ContentProps={{
                         'aria-describedby': 'message-id',
                     }}
-                    message={<span id="message-id">{message}</span>}
+                    message={<span id="message-id">{errorMessage}</span>}
                     action={[
                     ]}
                 />
+
                 <Dialog
-                    open={dialogOpen}
-                    onClose={this.handleClose}
-                    aria-labelledby="form-dialog-title"
+                    open={deletionDialogOpen}
+                    onClose={this.handleDeletionDialogClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="form-dialog-title">Create new forum thread</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{"User Deletion"}</DialogTitle>
                     <DialogContent>
-                        <DialogContentText>
-                            Enter the name of the new thread
+                        <DialogContentText id="alert-dialog-description">
+                            Are you sure you want to delete the selected user?
                         </DialogContentText>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="newThreadTitle"
-                            name="newThreadTitle"
-                            label="Thread Title"
-                            type="text"
-                            value={newThreadTitle}
-                            onChange={this.handleChange}
-                            fullWidth
-                        />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
+                        <Button onClick={this.handleDeletionDialogClose} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={this.handleCreate} color="primary">
-                            Create
+                        <Button onClick={this.handleDeletionDialogOk} color="primary" autoFocus>
+                            Delete
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -174,15 +169,14 @@ class ForumThreads extends React.PureComponent {
 
 function mapStateToProps(state) {
     const { store } = state;
-    const { threads, isFetching, message } = store.forum;
-    const { name } = store.login;
+    const { usersList, isFetching, errorMessage } = store.users;
 
-    return { threads, isFetching, name, message };
+    return { usersList, isFetching, errorMessage };
 }
 
-ForumThreads.propTypes = {
+Users.propTypes = {
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(ForumThreads));
+export default connect(mapStateToProps)(withStyles(styles)(Users));

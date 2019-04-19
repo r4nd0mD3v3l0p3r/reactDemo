@@ -418,7 +418,7 @@ export function createForumThreadPost(text, author, threadId) {
     };
 }
 
-function authHeader() {
+export function authHeader() {
     const cookies = new Cookies();
     const cookie = cookies.get(LOGIN_COOKIE);
 

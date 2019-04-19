@@ -1,9 +1,11 @@
 ﻿using Mongo2Go;
 using MongoDB.Driver;
 using reactDemo.Core.Services.Mongo.Collections;
+using reactDemo.Core.Services.Mongo.Collections.Chat;
 using reactDemo.Core.Services.Mongo.Collections.Forum;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace reactDemo.Core.Services.Mongo
 {
@@ -13,6 +15,8 @@ namespace reactDemo.Core.Services.Mongo
         public const string UsersCollection = "users";
         public const string ForumThread = "forumThreads";
         public const string ForumThreadPost = "forumThreadPosts";
+        public const string ChatOnlineUsers = "chatOnlineUsers";
+        public const string ChatMessages = "chatMessages";
         readonly MongoDbRunner _runner;
         readonly MongoClient _client;
 

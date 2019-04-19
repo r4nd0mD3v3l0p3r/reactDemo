@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using reactDemo.Controllers;
 using reactDemo.Core.Repositories;
+using reactDemo.Core.Repositories.Chat;
 using reactDemo.Core.Repositories.Forum;
 using reactDemo.Core.Services.Mongo;
 using System.Text;
@@ -26,6 +27,7 @@ namespace reactDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // In production, the React files will be served from this directory
@@ -38,6 +40,7 @@ namespace reactDemo
             services.AddSingleton<IUsersRepository, UserRepository>();
             services.AddSingleton<IForumThreadRepository, ForumThreadRepository>();
             services.AddSingleton<IForumThreadPostRepository, ForumThreadPostRepository>();
+            services.AddSingleton<IChatRepository, ChatRepository>();
 
             SetupJWT(services);
         }
@@ -59,6 +62,11 @@ namespace reactDemo
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseAuthentication();
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chatHub");
+            });
 
             app.UseMvc(routes =>
             {

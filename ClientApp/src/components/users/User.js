@@ -1,16 +1,15 @@
 ﻿import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import MenuAppBar from './MenuAppBar';
+import MenuAppBar from '../MenuAppBar';
 import PropTypes from "prop-types";
-import { loadUser } from '../actions';
+import { loadUser, changeUserPassword, addUser, createUser } from '../../actions';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { changeUserPassword, addUser, createUser } from '../actions';
 import Snackbar from '@material-ui/core/Snackbar';
 
 const styles = theme => ({
@@ -104,7 +103,9 @@ class User extends React.Component {
                         name="name"
                         margin="normal"
                         onChange={this.handleChange}
-                        disabled={true}
+                        InputProps={{
+                            readOnly: true,
+                        }}
                     />
                     <TextField
                         id="currentPassword"

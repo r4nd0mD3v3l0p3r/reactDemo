@@ -176,6 +176,12 @@ class MenuAppBar extends React.Component {
                             </ListItemIcon>
                             <ListItemText primary="Forum" />
                         </ListItem>
+                        <ListItem button key="Chat" component={Link} to="/chat">
+                            <ListItemIcon>
+                                <GroupIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Chat" />
+                        </ListItem>
                     </List>
                 </Drawer>
                 <main
