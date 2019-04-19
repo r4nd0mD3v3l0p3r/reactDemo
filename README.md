@@ -12,7 +12,9 @@ Json Web Token to handle user authentication
 Moment.js to handle dates
 Helmet for head tags
 React-Cookie to manage cookies
+SignalR to manage real-time UI updates
 
 Backend:
 ASP.NET CORE C# Web API
 MongoDB
+SignalR
